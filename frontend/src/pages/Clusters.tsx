@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 
 /**
  * Clusters component
@@ -7,146 +6,65 @@ import styled from 'styled-components';
  */
 const Clusters: React.FC = () => {
   return (
-    <ClustersContainer>
-      <Title>Player Clusters</Title>
-      <Description>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-6 text-[hsl(var(--nba-blue))] text-center">Player Clusters</h1>
+      <p className="text-xl mb-8 text-center max-w-3xl mx-auto">
         Explore groups of NBA players with similar playing styles and statistical profiles.
         Players are clustered based on advanced metrics and performance data.
-      </Description>
+      </p>
 
-      <ClusterCategories>
-        <ClusterCard>
-          <ClusterTitle>Scoring Guards</ClusterTitle>
-          <ClusterDescription>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="bg-card rounded-lg p-6 shadow-sm transition-all hover:translate-y-[-5px] hover:shadow-md">
+          <h3 className="text-xl font-semibold mb-4 text-[hsl(var(--nba-blue))]">Scoring Guards</h3>
+          <p className="text-sm text-muted-foreground mb-6">
             Guards who excel at scoring and creating their own shots.
-          </ClusterDescription>
-          <ViewButton>View Players</ViewButton>
-        </ClusterCard>
+          </p>
+          <button className="px-4 py-2 bg-[hsl(var(--nba-blue))] text-white rounded-md text-sm hover:bg-[hsl(var(--nba-blue))/0.9]">
+            View Players
+          </button>
+        </div>
 
-        <ClusterCard>
-          <ClusterTitle>Defensive Specialists</ClusterTitle>
-          <ClusterDescription>
+        <div className="bg-card rounded-lg p-6 shadow-sm transition-all hover:translate-y-[-5px] hover:shadow-md">
+          <h3 className="text-xl font-semibold mb-4 text-[hsl(var(--nba-blue))]">Defensive Specialists</h3>
+          <p className="text-sm text-muted-foreground mb-6">
             Players who make their biggest impact on the defensive end.
-          </ClusterDescription>
-          <ViewButton>View Players</ViewButton>
-        </ClusterCard>
+          </p>
+          <button className="px-4 py-2 bg-[hsl(var(--nba-blue))] text-white rounded-md text-sm hover:bg-[hsl(var(--nba-blue))/0.9]">
+            View Players
+          </button>
+        </div>
 
-        <ClusterCard>
-          <ClusterTitle>Stretch Bigs</ClusterTitle>
-          <ClusterDescription>
+        <div className="bg-card rounded-lg p-6 shadow-sm transition-all hover:translate-y-[-5px] hover:shadow-md">
+          <h3 className="text-xl font-semibold mb-4 text-[hsl(var(--nba-blue))]">Stretch Bigs</h3>
+          <p className="text-sm text-muted-foreground mb-6">
             Big men who can space the floor with outside shooting.
-          </ClusterDescription>
-          <ViewButton>View Players</ViewButton>
-        </ClusterCard>
+          </p>
+          <button className="px-4 py-2 bg-[hsl(var(--nba-blue))] text-white rounded-md text-sm hover:bg-[hsl(var(--nba-blue))/0.9]">
+            View Players
+          </button>
+        </div>
 
-        <ClusterCard>
-          <ClusterTitle>Playmaking Forwards</ClusterTitle>
-          <ClusterDescription>
+        <div className="bg-card rounded-lg p-6 shadow-sm transition-all hover:translate-y-[-5px] hover:shadow-md">
+          <h3 className="text-xl font-semibold mb-4 text-[hsl(var(--nba-blue))]">Playmaking Forwards</h3>
+          <p className="text-sm text-muted-foreground mb-6">
             Forwards who excel at creating for others and handling the ball.
-          </ClusterDescription>
-          <ViewButton>View Players</ViewButton>
-        </ClusterCard>
-      </ClusterCategories>
+          </p>
+          <button className="px-4 py-2 bg-[hsl(var(--nba-blue))] text-white rounded-md text-sm hover:bg-[hsl(var(--nba-blue))/0.9]">
+            View Players
+          </button>
+        </div>
+      </div>
 
-      <InfoSection>
-        <InfoTitle>About Clustering</InfoTitle>
-        <InfoText>
+      <div className="bg-card rounded-lg p-8 shadow-sm">
+        <h2 className="text-2xl font-semibold mb-4 text-[hsl(var(--nba-blue))]">About Clustering</h2>
+        <p className="text-base leading-relaxed text-muted-foreground">
           Our clustering algorithm uses machine learning techniques to group players based on
           statistical similarities. The algorithm analyzes dozens of metrics including scoring,
           efficiency, defensive impact, and playing style to create meaningful player clusters.
-        </InfoText>
-      </InfoSection>
-    </ClustersContainer>
+        </p>
+      </div>
+    </div>
   );
 };
-
-// Styled components
-const ClustersContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-`;
-
-const Title = styled.h1`
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  color: #1d428a; /* NBA blue */
-  text-align: center;
-`;
-
-const Description = styled.p`
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  text-align: center;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-`;
-
-const ClusterCategories = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
-`;
-
-const ClusterCard = styled.div`
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  }
-`;
-
-const ClusterTitle = styled.h3`
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  color: #1d428a;
-`;
-
-const ClusterDescription = styled.p`
-  font-size: 0.9rem;
-  margin-bottom: 1.5rem;
-  color: #6c757d;
-`;
-
-const ViewButton = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: #1d428a;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #17336d;
-  }
-`;
-
-const InfoSection = styled.div`
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const InfoTitle = styled.h2`
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #1d428a;
-`;
-
-const InfoText = styled.p`
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #495057;
-`;
 
 export default Clusters;

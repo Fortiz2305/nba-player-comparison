@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './components/MainLayout';
 import Home from './pages/Home';
-import PlayerComparison from './pages/PlayerComparison';
+import PlayerComparison from './components/PlayerComparison';
 import Clusters from './pages/Clusters';
 import About from './pages/About';
 import Documentation from './pages/Documentation';

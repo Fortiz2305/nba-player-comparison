@@ -1,188 +1,111 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { useState } from 'react'
+import { Activity, Menu, X } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { ThemeToggle } from './ui/theme-toggle'
 
 const Header: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   return (
-    <HeaderContainer>
-      <HeaderContent>
-        <LogoContainer to="/">
-          <LogoIcon>🏀</LogoIcon>
-          <LogoText>NBA Player Comparison</LogoText>
-        </LogoContainer>
+    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Activity className="h-6 w-6 text-[hsl(var(--nba-blue))]" />
+          <Link to="/" className="text-xl font-bold">NBA Player Comparison</Link>
+        </div>
 
-        <MobileMenuButton onClick={toggleMenu} aria-label="Toggle menu">
-          <MenuIcon $isOpen={isMenuOpen}>
-            <span></span>
-            <span></span>
-            <span></span>
-          </MenuIcon>
-        </MobileMenuButton>
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-6">
+          <Link
+            to="/"
+            className={`text-sm font-medium transition-colors hover:text-primary ${isActive('/') ? 'text-foreground' : 'text-muted-foreground'}`}
+          >
+            Home
+          </Link>
+          <Link
+            to="/comparison"
+            className={`text-sm font-medium transition-colors hover:text-primary ${isActive('/comparison') ? 'text-foreground' : 'text-muted-foreground'}`}
+          >
+            Similar Players
+          </Link>
+          <Link
+            to="/clusters"
+            className={`text-sm font-medium transition-colors hover:text-primary ${isActive('/clusters') ? 'text-foreground' : 'text-muted-foreground'}`}
+          >
+            Clusters
+          </Link>
+          <Link
+            to="/about"
+            className={`text-sm font-medium transition-colors hover:text-primary ${isActive('/about') ? 'text-foreground' : 'text-muted-foreground'}`}
+          >
+            About
+          </Link>
+        </nav>
 
-        <NavLinks $isOpen={isMenuOpen}>
-          <NavItem>
-            <NavLink to="/" onClick={() => setIsMenuOpen(false)}>Home</NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/comparison" onClick={() => setIsMenuOpen(false)}>Player Comparison</NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/clusters" onClick={() => setIsMenuOpen(false)}>Clusters</NavLink>
-          </NavItem>
-        </NavLinks>
-      </HeaderContent>
-    </HeaderContainer>
-  );
-};
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
 
-const HeaderContainer = styled.header`
-  background-color: #1d428a; /* NBA blue */
-  color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-`;
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 rounded-md hover:bg-accent"
+            onClick={toggleMobileMenu}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </button>
+        </div>
+      </div>
 
-const HeaderContent = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-
-  @media (max-width: 768px) {
-    flex-wrap: wrap;
-  }
-`;
-
-const LogoContainer = styled(Link)`
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: white;
-  margin-right: 2rem;
-`;
-
-const LogoIcon = styled.span`
-  font-size: 2rem;
-  margin-right: 0.5rem;
-`;
-
-const LogoText = styled.h1`
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
-
-  @media (max-width: 768px) {
-    font-size: 1.2rem;
-  }
-`;
-
-const MobileMenuButton = styled.button`
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-
-  @media (max-width: 768px) {
-    display: block;
-  }
-`;
-
-interface MenuIconProps {
-  $isOpen: boolean;
+      {/* Mobile Navigation */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t">
+          <div className="container py-3 space-y-1">
+            <Link
+              to="/"
+              className={`block py-2 px-3 rounded-md ${isActive('/') ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Home
+            </Link>
+            <Link
+              to="/comparison"
+              className={`block py-2 px-3 rounded-md ${isActive('/comparison') ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Similar Players
+            </Link>
+            <Link
+              to="/clusters"
+              className={`block py-2 px-3 rounded-md ${isActive('/clusters') ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Clusters
+            </Link>
+            <Link
+              to="/about"
+              className={`block py-2 px-3 rounded-md ${isActive('/about') ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              About
+            </Link>
+          </div>
+        </div>
+      )}
+    </header>
+  )
 }
 
-const MenuIcon = styled.div<MenuIconProps>`
-  width: 24px;
-  height: 24px;
-  position: relative;
-
-  span {
-    display: block;
-    position: absolute;
-    height: 3px;
-    width: 100%;
-    background: white;
-    border-radius: 3px;
-    opacity: 1;
-    left: 0;
-    transform: rotate(0deg);
-    transition: .25s ease-in-out;
-
-    &:nth-child(1) {
-      top: ${props => props.$isOpen ? '10px' : '4px'};
-      transform: ${props => props.$isOpen ? 'rotate(135deg)' : 'rotate(0)'};
-    }
-
-    &:nth-child(2) {
-      top: 10px;
-      opacity: ${props => props.$isOpen ? '0' : '1'};
-    }
-
-    &:nth-child(3) {
-      top: ${props => props.$isOpen ? '10px' : '16px'};
-      transform: ${props => props.$isOpen ? 'rotate(-135deg)' : 'rotate(0)'};
-    }
-  }
-`;
-
-interface NavLinksProps {
-  $isOpen: boolean;
-}
-
-const NavLinks = styled.ul<NavLinksProps>`
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    width: 100%;
-    max-height: ${props => props.$isOpen ? '300px' : '0'};
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
-    margin-top: ${props => props.$isOpen ? '1rem' : '0'};
-  }
-`;
-
-const NavItem = styled.li`
-  margin-left: 1.5rem;
-
-  @media (max-width: 768px) {
-    margin: 0;
-    padding: 0.75rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-`;
-
-const NavLink = styled(Link)`
-  color: white;
-  text-decoration: none;
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 0.5rem;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-
-  @media (max-width: 768px) {
-    display: block;
-    padding: 0.5rem 0;
-  }
-`;
-
-export default Header;
+export default Header

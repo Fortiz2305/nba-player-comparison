@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 
 /**
  * About page component
@@ -7,95 +6,55 @@ import styled from 'styled-components';
  */
 const About: React.FC = () => {
   return (
-    <AboutContainer>
-      <Title>About NBA Player Comparison</Title>
+    <div className="max-w-3xl mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-8 text-[hsl(var(--nba-blue))] text-center">About NBA Player Comparison</h1>
 
-      <Section>
-        <SectionTitle>Our Mission</SectionTitle>
-        <SectionContent>
+      <section className="mb-10">
+        <h2 className="text-2xl font-semibold mb-4 text-[hsl(var(--nba-blue))]">Our Mission</h2>
+        <p className="text-base leading-relaxed">
           The NBA Player Comparison tool was created to help basketball fans, analysts, and enthusiasts
           explore and compare player statistics in an intuitive and visually appealing way. Our goal is
           to make advanced basketball analytics accessible to everyone, regardless of their statistical
           background.
-        </SectionContent>
-      </Section>
+        </p>
+      </section>
 
-      <Section>
-        <SectionTitle>How It Works</SectionTitle>
-        <SectionContent>
+      <section className="mb-10">
+        <h2 className="text-2xl font-semibold mb-4 text-[hsl(var(--nba-blue))]">How It Works</h2>
+        <p className="text-base leading-relaxed">
           Our application uses data from various NBA seasons to provide comprehensive player comparisons.
           The clustering feature employs machine learning algorithms to group players with similar
           statistical profiles, helping users discover players with comparable playing styles.
-        </SectionContent>
-      </Section>
+        </p>
+      </section>
 
-      <Section>
-        <SectionTitle>Data Sources</SectionTitle>
-        <SectionContent>
+      <section className="mb-10">
+        <h2 className="text-2xl font-semibold mb-4 text-[hsl(var(--nba-blue))]">Data Sources</h2>
+        <p className="text-base leading-relaxed">
           All data used in this application is sourced from publicly available NBA statistics.
           The data is updated regularly to ensure accuracy and relevance. Please note that this
           application is for educational and entertainment purposes only.
-        </SectionContent>
-      </Section>
+        </p>
+      </section>
 
-      <Section>
-        <SectionTitle>Development Team</SectionTitle>
-        <SectionContent>
+      <section className="mb-10">
+        <h2 className="text-2xl font-semibold mb-4 text-[hsl(var(--nba-blue))]">Development Team</h2>
+        <p className="text-base leading-relaxed">
           This project was developed by a team of basketball enthusiasts with a passion for data
           visualization and web development. We're constantly working to improve the application
           and add new features.
-        </SectionContent>
-      </Section>
+        </p>
+      </section>
 
-      <Section>
-        <SectionTitle>Contact Us</SectionTitle>
-        <SectionContent>
+      <section className="mb-10">
+        <h2 className="text-2xl font-semibold mb-4 text-[hsl(var(--nba-blue))]">Contact Us</h2>
+        <p className="text-base leading-relaxed">
           Have questions, suggestions, or feedback? We'd love to hear from you! Please reach out
-          to us at <EmailLink href="mailto:contact@nbaplayercomparison.com">contact@nbaplayercomparison.com</EmailLink>.
-        </SectionContent>
-      </Section>
-    </AboutContainer>
+          to us at <a href="mailto:contact@nbaplayercomparison.com" className="text-[hsl(var(--nba-blue))] font-medium hover:underline">contact@nbaplayercomparison.com</a>.
+        </p>
+      </section>
+    </div>
   );
 };
-
-// Styled components
-const AboutContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-`;
-
-const Title = styled.h1`
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  color: #1d428a; /* NBA blue */
-  text-align: center;
-`;
-
-const Section = styled.section`
-  margin-bottom: 2.5rem;
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #1d428a; /* NBA blue */
-`;
-
-const SectionContent = styled.p`
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #333;
-`;
-
-const EmailLink = styled.a`
-  color: #1d428a;
-  text-decoration: none;
-  font-weight: 500;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
 
 export default About;

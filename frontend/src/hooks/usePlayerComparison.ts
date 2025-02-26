@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  PlayerStats,
-  SimilarPlayer,
   SimilarPlayersResponse,
   Player
 } from '../models/player';
