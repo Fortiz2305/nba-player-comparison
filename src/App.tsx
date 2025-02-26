@@ -1,26 +1,33 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import MainLayout from './components/MainLayout';
+import Home from './pages/Home';
+import PlayerComparison from './pages/PlayerComparison';
+import Clusters from './pages/Clusters';
+import About from './pages/About';
+import Documentation from './pages/Documentation';
+import Privacy from './pages/Privacy';
 import './App.css';
 
-function App() {
+/**
+ * App component
+ * Main component that sets up routing and application structure
+ */
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <MainLayout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/comparison" element={<PlayerComparison />} />
+          <Route path="/clusters" element={<Clusters />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/documentation" element={<Documentation />} />
+          <Route path="/privacy" element={<Privacy />} />
+        </Routes>
+      </MainLayout>
+    </Router>
   );
-}
+};
 
 export default App;

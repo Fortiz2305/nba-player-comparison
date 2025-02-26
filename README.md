@@ -1,46 +1,79 @@
-# Getting Started with Create React App
+# NBA Player Comparison
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React application for comparing NBA players and exploring player clusters based on statistical similarities.
+
+## Features
+
+- **Player Comparison**: Compare statistics between any two NBA players
+- **Player Clusters**: Explore groups of players with similar playing styles and statistical profiles
+- **Modern UI**: Clean, responsive interface built with React and styled-components
+
+## Tech Stack
+
+- React
+- TypeScript
+- React Router
+- styled-components
+
+## Project Structure
+
+```
+src/
+├── assets/        # Images, icons, and other static assets
+├── components/    # Reusable UI components
+├── hooks/         # Custom React hooks
+├── pages/         # Page components for each route
+├── styles/        # Global styles and theme configuration
+├── types/         # TypeScript type definitions
+└── utils/         # Utility functions and helpers
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v14 or later)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/nba-player-comparison.git
+   cd nba-player-comparison
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Start the development server:
+   ```
+   npm start
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) to view the app in your browser.
 
 ## Available Scripts
 
-In the project directory, you can run:
+- `npm start` - Runs the app in development mode
+- `npm test` - Launches the test runner
+- `npm run build` - Builds the app for production
+- `npm run eject` - Ejects from Create React App configuration
 
-### `npm start`
+## Future Enhancements
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Add player search functionality with autocomplete
+- Implement data visualization for player statistics
+- Add historical data and season filtering
+- Integrate with a backend API for real-time data
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## License
 
-### `npm test`
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Acknowledgments
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Data sourced for educational purposes only
+- Inspired by NBA statistics and analytics platforms
