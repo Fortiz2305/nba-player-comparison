@@ -1,0 +1,129 @@
+.player-comparison {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.player-comparison h2 {
+  color: #1d428a;
+  margin-bottom: 1.5rem;
+}
+
+.player-comparison form {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #1d428a;
+  box-shadow: 0 0 0 2px rgba(29, 66, 138, 0.25);
+}
+
+button {
+  padding: 0.75rem 1.5rem;
+  background-color: #1d428a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover:not(:disabled) {
+  background-color: #17336d;
+}
+
+button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.results {
+  margin-top: 2rem;
+}
+
+.results h3 {
+  color: #1d428a;
+  margin-bottom: 1rem;
+}
+
+.results h4 {
+  margin: 1.5rem 0 0.5rem;
+}
+
+.results table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.results table th,
+.results table td {
+  padding: 0.75rem;
+  text-align: center;
+  border: 1px solid #dee2e6;
+}
+
+.results table th {
+  background-color: #1d428a;
+  color: white;
+  font-weight: 600;
+}
+
+.results table tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.results table tr:hover {
+  background-color: #e9ecef;
+}
+
+@media (max-width: 768px) {
+  .results table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
