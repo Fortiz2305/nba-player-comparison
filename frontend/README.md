@@ -1,79 +1,36 @@
-# NBA Player Comparison
-
-A React application for comparing NBA players and exploring player clusters based on statistical similarities.
-
-## Features
-
-- **Player Comparison**: Compare statistics between any two NBA players
-- **Player Clusters**: Explore groups of players with similar playing styles and statistical profiles
-- **Modern UI**: Clean, responsive interface built with React and styled-components
-
-## Tech Stack
-
-- React
-- TypeScript
-- React Router
-- styled-components
-
-## Project Structure
-
-```
-src/
-├── assets/        # Images, icons, and other static assets
-├── components/    # Reusable UI components
-├── hooks/         # Custom React hooks
-├── pages/         # Page components for each route
-├── styles/        # Global styles and theme configuration
-├── types/         # TypeScript type definitions
-└── utils/         # Utility functions and helpers
-```
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-### Prerequisites
+First, run the development server:
 
-- Node.js (v14 or later)
-- npm or yarn
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-### Installation
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/nba-player-comparison.git
-   cd nba-player-comparison
-   ```
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-2. Install dependencies:
-   ```
-   npm install
-   ```
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-3. Start the development server:
-   ```
-   npm start
-   ```
+## Learn More
 
-4. Open [http://localhost:3000](http://localhost:3000) to view the app in your browser.
+To learn more about Next.js, take a look at the following resources:
 
-## Available Scripts
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-- `npm start` - Runs the app in development mode
-- `npm test` - Launches the test runner
-- `npm run build` - Builds the app for production
-- `npm run eject` - Ejects from Create React App configuration
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Future Enhancements
+## Deploy on Vercel
 
-- Add player search functionality with autocomplete
-- Implement data visualization for player statistics
-- Add historical data and season filtering
-- Integrate with a backend API for real-time data
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Data sourced for educational purposes only
-- Inspired by NBA statistics and analytics platforms
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
