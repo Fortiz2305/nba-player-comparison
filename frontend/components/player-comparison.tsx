@@ -13,7 +13,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   Legend,
 } from "recharts"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
@@ -21,11 +21,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown, HelpCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { getAllPlayers, getSimilarPlayers, calculateSkillRatings } from "@/lib/api"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { getAllPlayers, getSimilarPlayers, calculateSkillRatings, getSeasons } from "@/lib/api"
 import { PlayerStats, SimilarPlayer, PlayerSkillRatings } from "@/types/player"
 
 interface RadarDataPoint {
@@ -36,14 +37,17 @@ interface RadarDataPoint {
 interface DetailedStat {
   stat: string
   value: number
+  fullName: string
 }
 
 export default function PlayerComparison() {
   const [open, setOpen] = useState(false)
+  const [seasonOpen, setSeasonOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
   const [availablePlayers, setAvailablePlayers] = useState<PlayerStats[]>([])
+  const [availableSeasons, setAvailableSeasons] = useState<string[]>([])
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerStats | null>(null)
   const [selectedPlayerSkills, setSelectedPlayerSkills] = useState<PlayerSkillRatings | null>(null)
   const [similarPlayers, setSimilarPlayers] = useState<SimilarPlayer[]>([])
@@ -51,14 +55,35 @@ export default function PlayerComparison() {
   const [chartType, setChartType] = useState("radar")
   const [selectedPlayerForDetails, setSelectedPlayerForDetails] = useState<SimilarPlayer | null>(null)
   const [showDetailsDialog, setShowDetailsDialog] = useState(false)
-  const currentSeason = "2023_24"
+  const [selectedSeason, setSelectedSeason] = useState<string>("2023_24")
+
+  useEffect(() => {
+    const fetchSeasons = async () => {
+      try {
+        setIsLoading(true)
+        setHasError(false)
+        const seasons = await getSeasons()
+        setAvailableSeasons(seasons)
+        if (seasons.length > 0 && !seasons.includes(selectedSeason)) {
+          setSelectedSeason(seasons[0])
+        }
+      } catch (error) {
+        setHasError(true)
+        setErrorMessage(error instanceof Error ? error.message : "Failed to fetch seasons")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchSeasons()
+  }, [])
 
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
         setIsLoading(true)
         setHasError(false)
-        const players = await getAllPlayers(currentSeason)
+        const players = await getAllPlayers(selectedSeason)
         setAvailablePlayers(players)
       } catch (error) {
         setHasError(true)
@@ -68,8 +93,17 @@ export default function PlayerComparison() {
       }
     }
 
-    fetchPlayers()
-  }, [currentSeason])
+    if (selectedSeason) {
+      fetchPlayers()
+    }
+  }, [selectedSeason])
+
+  const handleSeasonSelect = (season: string) => {
+    setSelectedSeason(season)
+    setSelectedPlayer(null)
+    setSimilarPlayers([])
+    setSeasonOpen(false)
+  }
 
   const handlePlayerSelect = async (playerName: string) => {
     try {
@@ -79,7 +113,7 @@ export default function PlayerComparison() {
       const player = availablePlayers.find(p => p.player === playerName)
       if (!player) return
 
-      const response = await getSimilarPlayers(playerName, currentSeason, 5)
+      const response = await getSimilarPlayers(playerName, selectedSeason, 5)
 
       setSelectedPlayer(response.query_player)
       const queryPlayerSkills = calculateSkillRatings(response.query_player)
@@ -89,7 +123,7 @@ export default function PlayerComparison() {
 
       const skillsMap = new Map<string, PlayerSkillRatings>()
       response.similar_players.forEach(player => {
-        skillsMap.set(player.player, calculateSkillRatings(player.stats))
+        skillsMap.set(`${player.player} (${player.season})`, calculateSkillRatings(player.stats))
       })
       setSimilarPlayersSkills(skillsMap)
 
@@ -115,12 +149,13 @@ export default function PlayerComparison() {
     return categories.map((category) => {
       const data: RadarDataPoint = { category }
 
-      data[selectedPlayer.player] = selectedPlayerSkills[category as keyof PlayerSkillRatings]
+      data[`${selectedPlayer.player} (${selectedPlayer.season})`] = selectedPlayerSkills[category as keyof PlayerSkillRatings]
 
       similarPlayers.slice(0, 3).forEach(player => {
-        const skills = similarPlayersSkills.get(player.player)
+        const playerKey = `${player.player} (${player.season})`
+        const skills = similarPlayersSkills.get(playerKey)
         if (skills) {
-          data[player.player] = skills[category as keyof PlayerSkillRatings]
+          data[playerKey] = skills[category as keyof PlayerSkillRatings]
         }
       })
 
@@ -130,13 +165,86 @@ export default function PlayerComparison() {
 
   const getDetailedStats = (player: PlayerStats): DetailedStat[] => {
     return [
-      { stat: "PPG", value: player.points_per_game },
-      { stat: "RPG", value: player.total_rebounds_per_game },
-      { stat: "APG", value: player.assists_per_game },
-      { stat: "SPG", value: player.steals_per_game },
-      { stat: "BPG", value: player.blocks_per_game },
-      { stat: "FG%", value: player.field_goal_percentage * 100 },
+      { stat: "PPG", value: player.points_per_game, fullName: "Points Per Game" },
+      { stat: "RPG", value: player.total_rebounds_per_game, fullName: "Rebounds Per Game" },
+      { stat: "APG", value: player.assists_per_game, fullName: "Assists Per Game" },
+      { stat: "SPG", value: player.steals_per_game, fullName: "Steals Per Game" },
+      { stat: "BPG", value: player.blocks_per_game, fullName: "Blocks Per Game" },
+      { stat: "FG%", value: player.field_goal_percentage * 100, fullName: "Field Goal Percentage" },
     ]
+  }
+
+  const getPlayerPlayingStyles = (player: PlayerStats): string[] => {
+    const styles: string[] = []
+
+    // Scoring thresholds
+    if (player.points_per_game >= 20) {
+      styles.push("Elite Scorer")
+    } else if (player.points_per_game >= 15) {
+      styles.push("Scorer")
+    }
+
+    // Playmaking thresholds
+    if (player.assists_per_game >= 7) {
+      styles.push("Elite Playmaker")
+    } else if (player.assists_per_game >= 4) {
+      styles.push("Playmaker")
+    }
+
+    // Rebounding thresholds
+    if (player.total_rebounds_per_game >= 10) {
+      styles.push("Elite Rebounder")
+    } else if (player.total_rebounds_per_game >= 7) {
+      styles.push("Rebounder")
+    }
+
+    // Defense thresholds (combining steals and blocks)
+    const defensive_impact = player.steals_per_game + player.blocks_per_game
+    if (defensive_impact >= 3) {
+      styles.push("Elite Defender")
+    } else if (defensive_impact >= 1.5) {
+      styles.push("Defender")
+    }
+
+    // Efficiency threshold
+    if (player.field_goal_percentage >= 0.55) {
+      styles.push("Efficient")
+    }
+
+    // Three-point shooting
+    if (player.three_point_percentage >= 0.4 && player.three_point_attempts_per_game >= 3) {
+      styles.push("Sharpshooter")
+    } else if (player.three_point_percentage >= 0.35 && player.three_point_attempts_per_game >= 2) {
+      styles.push("3PT Shooter")
+    }
+
+    // Position-specific styles
+    if (player.position.includes("C")) {
+      if (player.blocks_per_game >= 1.5) {
+        styles.push("Rim Protector")
+      }
+    }
+
+    if (player.position.includes("PG")) {
+      if (player.assists_per_game >= 8) {
+        styles.push("Floor General")
+      }
+    }
+
+    // If no styles are found, add a generic one based on position
+    if (styles.length === 0) {
+      if (player.position.includes("G")) {
+        styles.push("Guard")
+      } else if (player.position.includes("F")) {
+        styles.push("Forward")
+      } else if (player.position.includes("C")) {
+        styles.push("Center")
+      } else {
+        styles.push("Role Player")
+      }
+    }
+
+    return styles
   }
 
   const playerColors = [
@@ -146,12 +254,16 @@ export default function PlayerComparison() {
     "#CC3366", // Magenta
   ]
 
-  if (isLoading && availablePlayers.length === 0) {
+  const formatSeasonDisplay = (season: string): string => {
+    return season.replace('_', '/');
+  }
+
+  if (isLoading && availablePlayers.length === 0 && availableSeasons.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg">Loading players...</p>
+          <p className="text-lg">Loading data...</p>
         </div>
       </div>
     )
@@ -177,72 +289,122 @@ export default function PlayerComparison() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col items-center justify-center space-y-4">
-        <div className="w-full max-w-md">
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-full justify-between bg-white dark:bg-slate-900 border-2 h-14 text-lg"
-                onClick={() => setOpen(!open)}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <span className="flex items-center">
-                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></span>
-                    Loading...
-                  </span>
-                ) : selectedPlayer ? (
-                  selectedPlayer.player
-                ) : (
-                  "Select an NBA player..."
-                )}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
-              <Command>
-                <CommandInput placeholder="Search for a player..." className="h-12" />
-                <CommandList>
-                  <CommandEmpty>No player found.</CommandEmpty>
-                  <CommandGroup heading="Players">
-                    {availablePlayers && availablePlayers.length > 0 ? (
-                      availablePlayers.map((player) => {
-                        return (
-                          <CommandItem
-                            key={player.player_id || player.player}
-                            value={player.player}
-                            onSelect={(value) => {
-                              handlePlayerSelect(value);
-                            }}
-                            className="cursor-pointer py-3 flex items-center"
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4 flex-shrink-0",
-                                selectedPlayer?.player === player.player ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                            <span className="flex flex-col">
-                              <span className="font-medium text-base text-foreground">{player.player}</span>
-                              <span className="text-sm text-muted-foreground">
-                                {player.team} • {player.position}
+        <div className="w-full max-w-md space-y-4">
+          <div className="flex gap-4">
+            <Popover open={seasonOpen} onOpenChange={setSeasonOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={seasonOpen}
+                  className="w-1/3 justify-between bg-white dark:bg-slate-900 border-2 h-14 text-lg"
+                  onClick={() => setSeasonOpen(!seasonOpen)}
+                  disabled={isLoading || availableSeasons.length === 0}
+                >
+                  {isLoading ? (
+                    <span className="flex items-center">
+                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></span>
+                      Loading...
+                    </span>
+                  ) : (
+                    formatSeasonDisplay(selectedSeason)
+                  )}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
+                <Command>
+                  <CommandList>
+                    <CommandEmpty>No seasons found.</CommandEmpty>
+                    <CommandGroup heading="Seasons">
+                      {availableSeasons.map((season) => (
+                        <CommandItem
+                          key={season}
+                          value={season}
+                          onSelect={(value) => handleSeasonSelect(value)}
+                          className="cursor-pointer py-3"
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4 flex-shrink-0",
+                              selectedSeason === season ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          <span>{formatSeasonDisplay(season)}</span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-2/3 justify-between bg-white dark:bg-slate-900 border-2 h-14 text-lg"
+                  onClick={() => setOpen(!open)}
+                  disabled={isLoading || availablePlayers.length === 0}
+                >
+                  {isLoading ? (
+                    <span className="flex items-center">
+                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></span>
+                      Loading...
+                    </span>
+                  ) : selectedPlayer ? (
+                    selectedPlayer.player
+                  ) : (
+                    "Select an NBA player..."
+                  )}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
+                <Command>
+                  <CommandInput placeholder="Search for a player..." className="h-12" />
+                  <CommandList>
+                    <CommandEmpty>No player found.</CommandEmpty>
+                    <CommandGroup heading="Players">
+                      {availablePlayers && availablePlayers.length > 0 ? (
+                        availablePlayers.map((player) => {
+                          return (
+                            <CommandItem
+                              key={player.player_id || player.player}
+                              value={player.player}
+                              onSelect={(value) => {
+                                handlePlayerSelect(value);
+                              }}
+                              className="cursor-pointer py-3 flex items-center"
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4 flex-shrink-0",
+                                  selectedPlayer?.player === player.player ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              <span className="flex flex-col">
+                                <span className="font-medium text-base text-foreground">{player.player}</span>
+                                <span className="text-sm text-muted-foreground">
+                                  {player.team} • {player.position}
+                                </span>
                               </span>
-                            </span>
-                          </CommandItem>
-                        );
-                      })
-                    ) : (
-                      <div className="p-4 text-center text-sm text-slate-500">
-                        {isLoading ? "Loading players..." : "No players available"}
-                      </div>
-                    )}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+                            </CommandItem>
+                          );
+                        })
+                      ) : (
+                        <div className="p-4 text-center text-sm text-slate-500">
+                          {isLoading ? "Loading players..." : "No players available"}
+                        </div>
+                      )}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
 
         {selectedPlayer && (
@@ -280,17 +442,18 @@ export default function PlayerComparison() {
                             <div>
                               <p className="font-semibold">{player.player}</p>
                               <p className="text-sm text-slate-500">{player.stats.team}</p>
+                              <p className="text-xs text-slate-400">{formatSeasonDisplay(player.season)}</p>
                             </div>
                             <Badge
                               className={`${
-                                player.similarity_score > 90
+                                player.similarity_score > 0.9
                                   ? "bg-green-600"
-                                  : player.similarity_score > 80
+                                  : player.similarity_score > 0.8
                                     ? "bg-blue-600"
                                     : "bg-orange-500"
                               }`}
                             >
-                              {Math.round(player.similarity_score)}%
+                              {Math.round(player.similarity_score * 100)}%
                             </Badge>
                           </div>
                         </CardContent>
@@ -308,8 +471,8 @@ export default function PlayerComparison() {
                         <PolarRadiusAxis angle={30} domain={[0, 100]} />
 
                         <Radar
-                          name={selectedPlayer.player}
-                          dataKey={selectedPlayer.player}
+                          name={`${selectedPlayer.player} (${formatSeasonDisplay(selectedPlayer.season)})`}
+                          dataKey={`${selectedPlayer.player} (${selectedPlayer.season})`}
                           stroke={playerColors[0]}
                           fill={playerColors[0]}
                           fillOpacity={0.3}
@@ -318,8 +481,8 @@ export default function PlayerComparison() {
                         {similarPlayers.slice(0, 3).map((player, index) => (
                           <Radar
                             key={player.player}
-                            name={player.player}
-                            dataKey={player.player}
+                            name={`${player.player} (${formatSeasonDisplay(player.season)})`}
+                            dataKey={`${player.player} (${player.season})`}
                             stroke={playerColors[index + 1]}
                             fill={playerColors[index + 1]}
                             fillOpacity={0.3}
@@ -327,7 +490,7 @@ export default function PlayerComparison() {
                         ))}
 
                         <Legend />
-                        <Tooltip />
+                        <RechartsTooltip />
                       </RadarChart>
                     </ResponsiveContainer>
                   ) : (
@@ -339,16 +502,21 @@ export default function PlayerComparison() {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="stat" />
                         <YAxis />
-                        <Tooltip />
+                        <RechartsTooltip />
                         <Legend />
-                        <Bar dataKey="value" name={selectedPlayer.player} fill="#3366CC" />
-                        {similarPlayers.length > 0 && (
+                        <Bar
+                          dataKey="value"
+                          name={`${selectedPlayer.player} (${formatSeasonDisplay(selectedPlayer.season)})`}
+                          fill={playerColors[0]}
+                        />
+                        {similarPlayers.slice(0, 3).map((player, index) => (
                           <Bar
+                            key={player.player}
                             dataKey="value"
-                            name={similarPlayers[0].player}
-                            fill="#FF9933"
+                            name={`${player.player} (${formatSeasonDisplay(player.season)})`}
+                            fill={playerColors[index + 1]}
                           />
-                        )}
+                        ))}
                       </BarChart>
                     </ResponsiveContainer>
                   )}
@@ -366,22 +534,26 @@ export default function PlayerComparison() {
               {selectedPlayerForDetails?.player}
               <Badge className="bg-blue-600">{selectedPlayerForDetails?.position}</Badge>
             </DialogTitle>
-            <DialogDescription>{selectedPlayerForDetails?.stats.team}</DialogDescription>
+            <DialogDescription>
+              {selectedPlayerForDetails?.stats.team} • {selectedPlayerForDetails && formatSeasonDisplay(selectedPlayerForDetails.season)}
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <h4 className="font-medium">Similarity Score</h4>
                 <div className="text-2xl font-bold text-blue-600">
-                  {selectedPlayerForDetails && Math.round(selectedPlayerForDetails.similarity_score)}%
+                  {selectedPlayerForDetails && (selectedPlayerForDetails.similarity_score * 100).toFixed(2)}%
                 </div>
               </div>
               <div className="space-y-2">
                 <h4 className="font-medium">Playing Style</h4>
                 <div className="flex flex-wrap gap-1">
-                  <Badge variant="outline">Scorer</Badge>
-                  <Badge variant="outline">Playmaker</Badge>
-                  <Badge variant="outline">Athletic</Badge>
+                  {selectedPlayerForDetails &&
+                    getPlayerPlayingStyles(selectedPlayerForDetails.stats).map((style, index) => (
+                      <Badge key={index} variant="outline">{style}</Badge>
+                    ))
+                  }
                 </div>
               </div>
             </div>
@@ -392,8 +564,20 @@ export default function PlayerComparison() {
                 {selectedPlayerForDetails &&
                   getDetailedStats(selectedPlayerForDetails.stats).map((stat, index) => (
                     <div key={index} className="bg-slate-100 dark:bg-slate-800 p-2 rounded-md text-center">
-                      <div className="text-sm text-slate-500">{stat.stat}</div>
-                      <div className="font-bold">{stat.value}</div>
+                      <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                          <TooltipTrigger asChild>
+                            <div className="text-sm text-slate-500 cursor-help flex items-center justify-center gap-1">
+                              {stat.stat}
+                              <HelpCircle size={12} />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{stat.fullName}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <div className="font-bold">{stat.value.toFixed(2)}</div>
                     </div>
                   ))}
               </div>
