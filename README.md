@@ -1,96 +1,85 @@
-# NBA Player Comparison App
+# NBA Player Comparison
 
-A full-stack web application for comparing NBA players and finding similar players based on statistical analysis.
+This application allows users to compare NBA players based on their statistics and find similar players.
 
 ## Project Structure
 
-The project is organized into two main directories:
+- `backend/`: Flask API for player similarity analysis
+- `frontend/`: Next.js frontend application
 
-- `frontend/`: React/TypeScript frontend application
-- `backend/`: Python FastAPI backend application
+## Getting Started
+
+### Backend Setup
+
+1. Navigate to the backend directory:
+   ```
+   cd backend
+   ```
+
+2. Install the required dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+3. Start the backend server:
+   ```
+   python run.py
+   ```
+
+   The backend API will be available at http://localhost:8000
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```
+   cd frontend
+   ```
+
+2. Install the required dependencies:
+   ```
+   npm install
+   ```
+
+3. Create a `.env.local` file with the following content:
+   ```
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   ```
+
+4. Start the frontend development server:
+   ```
+   npm run dev
+   ```
+
+   The frontend application will be available at http://localhost:3000
 
 ## Features
 
-- Find similar NBA players using K-nearest neighbors algorithm
-- Compare player statistics across different seasons
-- Interactive UI for exploring player similarities
-- RESTful API for player data and similarity calculations
+- Search for NBA players
+- View player statistics in radar and bar charts
+- Find similar players based on statistical analysis
+- Compare players side by side
 
-## Backend
+## API Endpoints
 
-The backend is built with FastAPI and provides the following endpoints:
-
-- `GET /players`: Get a list of all players, optionally filtered by season
+- `GET /players`: Get a list of all players
 - `GET /players/seasons`: Get a list of all available seasons
 - `GET /players/similar`: Find players most similar to a given player
-- `POST /players/similar`: Find players most similar to a given player (POST method)
-
-### Setup
-
-1. Navigate to the backend directory:
-
-```bash
-cd backend
-```
-
-2. Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-3. Run the server:
-
-```bash
-python run.py
-```
-
-The API will be available at http://localhost:8000
-
-## Frontend
-
-The frontend is built with React and TypeScript and provides a user interface for interacting with the backend API.
-
-### Setup
-
-1. Navigate to the frontend directory:
-
-```bash
-cd frontend
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Run the development server:
-
-```bash
-npm start
-```
-
-The frontend will be available at http://localhost:3000
-
-## Data
-
-The application uses NBA player statistics stored in CSV files in the `backend/data` directory. Each file should be named with the season (e.g., `2023_24.csv`) and contain player statistics for that season.
 
 ## Technologies Used
 
-### Frontend
-- React
-- TypeScript
-- React Router
-- CSS
+- Backend:
+  - Flask
+  - FastAPI
+  - Pandas for data analysis
+  - Scikit-learn for similarity calculations
 
-### Backend
-- Python
-- FastAPI
-- Pandas
-- NumPy
-- scikit-learn
+- Frontend:
+  - Next.js
+  - React
+  - TypeScript
+  - Tailwind CSS
+  - Recharts for data visualization
+  - Shadcn UI components
 
 ## License
 

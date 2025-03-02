@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Radar,
   RadarChart,
@@ -25,25 +25,12 @@ import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { getAllPlayers, getSimilarPlayers, calculateSkillRatings } from "@/lib/api"
+import { PlayerStats, SimilarPlayer, PlayerSkillRatings } from "@/types/player"
 
-// Define types for our data structures
-interface Player {
-  id: number
-  name: string
-  team: string
-  position: string
-}
-
-interface SimilarPlayer extends Player {
-  similarity: number
-}
-
-interface PlayerStats {
-  scoring: number
-  playmaking: number
-  defense: number
-  athleticism: number
-  basketball_iq: number
+interface RadarDataPoint {
+  category: string
+  [key: string]: string | number
 }
 
 interface DetailedStat {
@@ -51,168 +38,68 @@ interface DetailedStat {
   value: number
 }
 
-interface RadarDataPoint {
-  category: string
-  [key: string]: string | number
-}
-
-type PlayerStatsMap = {
-  [key: string]: PlayerStats
-}
-
-type DetailedStatsMap = {
-  [key: string]: DetailedStat[]
-}
-
-type SimilarPlayersMap = {
-  [key: string]: SimilarPlayer[]
-}
-
-const nbaPlayers: Player[] = [
-  { id: 1, name: "LeBron James", team: "Los Angeles Lakers", position: "SF" },
-  { id: 2, name: "Stephen Curry", team: "Golden State Warriors", position: "PG" },
-  { id: 3, name: "Kevin Durant", team: "Phoenix Suns", position: "SF" },
-  { id: 4, name: "Giannis Antetokounmpo", team: "Milwaukee Bucks", position: "PF" },
-  { id: 5, name: "Nikola Jokić", team: "Denver Nuggets", position: "C" },
-  { id: 6, name: "Luka Dončić", team: "Dallas Mavericks", position: "PG" },
-  { id: 7, name: "Joel Embiid", team: "Philadelphia 76ers", position: "C" },
-  { id: 8, name: "Jayson Tatum", team: "Boston Celtics", position: "SF" },
-  { id: 9, name: "Ja Morant", team: "Memphis Grizzlies", position: "PG" },
-  { id: 10, name: "Kawhi Leonard", team: "Los Angeles Clippers", position: "SF" },
-]
-
-const similarPlayersData: SimilarPlayersMap = {
-  "LeBron James": [
-    { id: 8, name: "Jayson Tatum", similarity: 92, team: "Boston Celtics", position: "SF" },
-    { id: 3, name: "Kevin Durant", similarity: 89, team: "Phoenix Suns", position: "SF" },
-    { id: 4, name: "Giannis Antetokounmpo", similarity: 85, team: "Milwaukee Bucks", position: "PF" },
-    { id: 6, name: "Luka Dončić", similarity: 82, team: "Dallas Mavericks", position: "PG" },
-  ],
-  "Stephen Curry": [
-    { id: 9, name: "Ja Morant", similarity: 88, team: "Memphis Grizzlies", position: "PG" },
-    { id: 6, name: "Luka Dončić", similarity: 85, team: "Dallas Mavericks", position: "PG" },
-    { id: 3, name: "Kevin Durant", similarity: 80, team: "Phoenix Suns", position: "SF" },
-    { id: 10, name: "Kawhi Leonard", similarity: 75, team: "Los Angeles Clippers", position: "SF" },
-  ],
-}
-
-const getPlayerStats = (playerName: string): PlayerStats => {
-  const statsMap: PlayerStatsMap = {
-    "LeBron James": { scoring: 90, playmaking: 95, defense: 85, athleticism: 95, basketball_iq: 98 },
-    "Stephen Curry": { scoring: 95, playmaking: 90, defense: 75, athleticism: 85, basketball_iq: 95 },
-    "Kevin Durant": { scoring: 98, playmaking: 80, defense: 85, athleticism: 90, basketball_iq: 90 },
-    "Giannis Antetokounmpo": { scoring: 90, playmaking: 80, defense: 90, athleticism: 95, basketball_iq: 85 },
-    "Nikola Jokić": { scoring: 90, playmaking: 95, defense: 75, athleticism: 75, basketball_iq: 98 },
-    "Luka Dončić": { scoring: 92, playmaking: 95, defense: 75, athleticism: 85, basketball_iq: 95 },
-    "Joel Embiid": { scoring: 92, playmaking: 75, defense: 90, athleticism: 90, basketball_iq: 88 },
-    "Jayson Tatum": { scoring: 92, playmaking: 80, defense: 85, athleticism: 90, basketball_iq: 88 },
-    "Ja Morant": { scoring: 88, playmaking: 90, defense: 75, athleticism: 98, basketball_iq: 85 },
-    "Kawhi Leonard": { scoring: 90, playmaking: 80, defense: 95, athleticism: 90, basketball_iq: 95 },
-  }
-
-  return statsMap[playerName] || { scoring: 0, playmaking: 0, defense: 0, athleticism: 0, basketball_iq: 0 }
-}
-
-const getDetailedStats = (playerName: string): DetailedStat[] => {
-  const statsMap: DetailedStatsMap = {
-    "LeBron James": [
-      { stat: "PPG", value: 27.2 },
-      { stat: "RPG", value: 7.5 },
-      { stat: "APG", value: 8.3 },
-      { stat: "SPG", value: 1.3 },
-      { stat: "BPG", value: 0.8 },
-      { stat: "FG%", value: 52.0 },
-    ],
-    "Stephen Curry": [
-      { stat: "PPG", value: 29.4 },
-      { stat: "RPG", value: 6.1 },
-      { stat: "APG", value: 6.3 },
-      { stat: "SPG", value: 1.4 },
-      { stat: "BPG", value: 0.4 },
-      { stat: "FG%", value: 49.0 },
-    ],
-    "Jayson Tatum": [
-      { stat: "PPG", value: 26.9 },
-      { stat: "RPG", value: 8.1 },
-      { stat: "APG", value: 4.7 },
-      { stat: "SPG", value: 1.1 },
-      { stat: "BPG", value: 0.7 },
-      { stat: "FG%", value: 47.0 },
-    ],
-    "Kevin Durant": [
-      { stat: "PPG", value: 28.3 },
-      { stat: "RPG", value: 7.0 },
-      { stat: "APG", value: 5.5 },
-      { stat: "SPG", value: 0.8 },
-      { stat: "BPG", value: 1.2 },
-      { stat: "FG%", value: 53.0 },
-    ],
-    "Giannis Antetokounmpo": [
-      { stat: "PPG", value: 29.7 },
-      { stat: "RPG", value: 11.5 },
-      { stat: "APG", value: 5.8 },
-      { stat: "SPG", value: 1.1 },
-      { stat: "BPG", value: 1.3 },
-      { stat: "FG%", value: 55.0 },
-    ],
-    "Luka Dončić": [
-      { stat: "PPG", value: 32.4 },
-      { stat: "RPG", value: 8.6 },
-      { stat: "APG", value: 8.0 },
-      { stat: "SPG", value: 1.4 },
-      { stat: "BPG", value: 0.5 },
-      { stat: "FG%", value: 49.0 },
-    ],
-    "Ja Morant": [
-      { stat: "PPG", value: 24.8 },
-      { stat: "RPG", value: 5.9 },
-      { stat: "APG", value: 8.2 },
-      { stat: "SPG", value: 1.1 },
-      { stat: "BPG", value: 0.3 },
-      { stat: "FG%", value: 47.0 },
-    ],
-    "Kawhi Leonard": [
-      { stat: "PPG", value: 23.8 },
-      { stat: "RPG", value: 6.5 },
-      { stat: "APG", value: 3.9 },
-      { stat: "SPG", value: 1.4 },
-      { stat: "BPG", value: 0.5 },
-      { stat: "FG%", value: 51.0 },
-    ],
-  }
-
-  return statsMap[playerName] || []
-}
-
-// Format radar chart data
-const formatRadarData = (players: Player[]): RadarDataPoint[] => {
-  const categories = ["scoring", "playmaking", "defense", "athleticism", "basketball_iq"]
-  return categories.map((category) => {
-    const data: RadarDataPoint = { category }
-    players.forEach((player) => {
-      const stats = getPlayerStats(player.name)
-      data[player.name] = stats[category as keyof PlayerStats]
-    })
-    return data
-  })
-}
-
 export default function PlayerComparison() {
   const [open, setOpen] = useState(false)
-  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [hasError, setHasError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+  const [availablePlayers, setAvailablePlayers] = useState<PlayerStats[]>([])
+  const [selectedPlayer, setSelectedPlayer] = useState<PlayerStats | null>(null)
+  const [selectedPlayerSkills, setSelectedPlayerSkills] = useState<PlayerSkillRatings | null>(null)
   const [similarPlayers, setSimilarPlayers] = useState<SimilarPlayer[]>([])
+  const [similarPlayersSkills, setSimilarPlayersSkills] = useState<Map<string, PlayerSkillRatings>>(new Map())
   const [chartType, setChartType] = useState("radar")
   const [selectedPlayerForDetails, setSelectedPlayerForDetails] = useState<SimilarPlayer | null>(null)
   const [showDetailsDialog, setShowDetailsDialog] = useState(false)
+  const currentSeason = "2023_24"
 
-  const handlePlayerSelect = (playerName: string) => {
-    const player = nbaPlayers.find(p => p.name === playerName)
-    if (player) {
-      setSelectedPlayer(player)
-      // Get similar players based on the selected player
-      const similar = similarPlayersData[player.name] || []
-      setSimilarPlayers(similar)
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        setIsLoading(true)
+        setHasError(false)
+        const players = await getAllPlayers(currentSeason)
+        setAvailablePlayers(players)
+      } catch (error) {
+        setHasError(true)
+        setErrorMessage(error instanceof Error ? error.message : "Failed to fetch players")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchPlayers()
+  }, [currentSeason])
+
+  const handlePlayerSelect = async (playerName: string) => {
+    try {
+      setIsLoading(true)
+      setHasError(false)
+
+      const player = availablePlayers.find(p => p.player === playerName)
+      if (!player) return
+
+      const response = await getSimilarPlayers(playerName, currentSeason, 5)
+
+      setSelectedPlayer(response.query_player)
+      const queryPlayerSkills = calculateSkillRatings(response.query_player)
+      setSelectedPlayerSkills(queryPlayerSkills)
+
+      setSimilarPlayers(response.similar_players)
+
+      const skillsMap = new Map<string, PlayerSkillRatings>()
+      response.similar_players.forEach(player => {
+        skillsMap.set(player.player, calculateSkillRatings(player.stats))
+      })
+      setSimilarPlayersSkills(skillsMap)
+
       setOpen(false)
+    } catch (error) {
+      setHasError(true)
+      setErrorMessage(error instanceof Error ? error.message : "Failed to fetch similar players")
+      console.error('Error fetching similar players:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -221,21 +108,71 @@ export default function PlayerComparison() {
     setShowDetailsDialog(true)
   }
 
-  // Prepare data for radar chart
-  const getRadarData = () => {
-    if (!selectedPlayer) return []
+  const getRadarData = (): RadarDataPoint[] => {
+    if (!selectedPlayer || !selectedPlayerSkills) return []
 
-    const playersToCompare = [selectedPlayer, ...similarPlayers.slice(0, 3)]
-    return formatRadarData(playersToCompare)
+    const categories = ["scoring", "playmaking", "defense", "athleticism", "basketball_iq"]
+    return categories.map((category) => {
+      const data: RadarDataPoint = { category }
+
+      data[selectedPlayer.player] = selectedPlayerSkills[category as keyof PlayerSkillRatings]
+
+      similarPlayers.slice(0, 3).forEach(player => {
+        const skills = similarPlayersSkills.get(player.player)
+        if (skills) {
+          data[player.player] = skills[category as keyof PlayerSkillRatings]
+        }
+      })
+
+      return data
+    })
   }
 
-  // Custom colors for the chart
+  const getDetailedStats = (player: PlayerStats): DetailedStat[] => {
+    return [
+      { stat: "PPG", value: player.points_per_game },
+      { stat: "RPG", value: player.total_rebounds_per_game },
+      { stat: "APG", value: player.assists_per_game },
+      { stat: "SPG", value: player.steals_per_game },
+      { stat: "BPG", value: player.blocks_per_game },
+      { stat: "FG%", value: player.field_goal_percentage * 100 },
+    ]
+  }
+
   const playerColors = [
     "#3366CC", // Primary blue
     "#FF9933", // Orange
     "#33CC99", // Teal
     "#CC3366", // Magenta
   ]
+
+  if (isLoading && availablePlayers.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-lg">Loading players...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (hasError) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center text-red-500">
+          <p className="text-lg mb-2">Error loading data</p>
+          <p>{errorMessage}</p>
+          <Button
+            className="mt-4"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -249,8 +186,18 @@ export default function PlayerComparison() {
                 aria-expanded={open}
                 className="w-full justify-between bg-white dark:bg-slate-900 border-2 h-14 text-lg"
                 onClick={() => setOpen(!open)}
+                disabled={isLoading}
               >
-                {selectedPlayer ? selectedPlayer.name : "Select an NBA player..."}
+                {isLoading ? (
+                  <span className="flex items-center">
+                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></span>
+                    Loading...
+                  </span>
+                ) : selectedPlayer ? (
+                  selectedPlayer.player
+                ) : (
+                  "Select an NBA player..."
+                )}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -259,20 +206,38 @@ export default function PlayerComparison() {
                 <CommandInput placeholder="Search for a player..." className="h-12" />
                 <CommandList>
                   <CommandEmpty>No player found.</CommandEmpty>
-                  <CommandGroup>
-                    {nbaPlayers.map((player) => (
-                      <CommandItem key={player.id} value={player.name} onSelect={handlePlayerSelect}>
-                        <Check
-                          className={cn("mr-2 h-4 w-4", selectedPlayer?.id === player.id ? "opacity-100" : "opacity-0")}
-                        />
-                        <div className="flex flex-col">
-                          <span>{player.name}</span>
-                          <span className="text-sm text-slate-500">
-                            {player.team} • {player.position}
-                          </span>
-                        </div>
-                      </CommandItem>
-                    ))}
+                  <CommandGroup heading="Players">
+                    {availablePlayers && availablePlayers.length > 0 ? (
+                      availablePlayers.map((player) => {
+                        return (
+                          <CommandItem
+                            key={player.player_id || player.player}
+                            value={player.player}
+                            onSelect={(value) => {
+                              handlePlayerSelect(value);
+                            }}
+                            className="cursor-pointer py-3 flex items-center"
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4 flex-shrink-0",
+                                selectedPlayer?.player === player.player ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            <span className="flex flex-col">
+                              <span className="font-medium text-base text-foreground">{player.player}</span>
+                              <span className="text-sm text-muted-foreground">
+                                {player.team} • {player.position}
+                              </span>
+                            </span>
+                          </CommandItem>
+                        );
+                      })
+                    ) : (
+                      <div className="p-4 text-center text-sm text-slate-500">
+                        {isLoading ? "Loading players..." : "No players available"}
+                      </div>
+                    )}
                   </CommandGroup>
                 </CommandList>
               </Command>
@@ -287,7 +252,7 @@ export default function PlayerComparison() {
                 <div className="flex justify-between items-center">
                   <div>
                     <CardTitle className="text-2xl">
-                      {selectedPlayer.name}
+                      {selectedPlayer.player}
                       <Badge className="ml-2 bg-blue-600">{selectedPlayer.position}</Badge>
                     </CardTitle>
                     <CardDescription>{selectedPlayer.team}</CardDescription>
@@ -306,26 +271,26 @@ export default function PlayerComparison() {
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {similarPlayers.map((player) => (
                       <Card
-                        key={player.id}
+                        key={player.player}
                         className="cursor-pointer hover:shadow-md transition-shadow"
                         onClick={() => handlePlayerClick(player)}
                       >
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="font-semibold">{player.name}</p>
-                              <p className="text-sm text-slate-500">{player.team}</p>
+                              <p className="font-semibold">{player.player}</p>
+                              <p className="text-sm text-slate-500">{player.stats.team}</p>
                             </div>
                             <Badge
                               className={`${
-                                player.similarity > 90
+                                player.similarity_score > 90
                                   ? "bg-green-600"
-                                  : player.similarity > 80
+                                  : player.similarity_score > 80
                                     ? "bg-blue-600"
                                     : "bg-orange-500"
                               }`}
                             >
-                              {player.similarity}%
+                              {Math.round(player.similarity_score)}%
                             </Badge>
                           </div>
                         </CardContent>
@@ -342,21 +307,19 @@ export default function PlayerComparison() {
                         <PolarAngleAxis dataKey="category" />
                         <PolarRadiusAxis angle={30} domain={[0, 100]} />
 
-                        {/* Selected player */}
                         <Radar
-                          name={selectedPlayer.name}
-                          dataKey={selectedPlayer.name}
+                          name={selectedPlayer.player}
+                          dataKey={selectedPlayer.player}
                           stroke={playerColors[0]}
                           fill={playerColors[0]}
                           fillOpacity={0.3}
                         />
 
-                        {/* Similar players */}
                         {similarPlayers.slice(0, 3).map((player, index) => (
                           <Radar
-                            key={player.id}
-                            name={player.name}
-                            dataKey={player.name}
+                            key={player.player}
+                            name={player.player}
+                            dataKey={player.player}
                             stroke={playerColors[index + 1]}
                             fill={playerColors[index + 1]}
                             fillOpacity={0.3}
@@ -370,7 +333,7 @@ export default function PlayerComparison() {
                   ) : (
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
-                        data={getDetailedStats(selectedPlayer.name)}
+                        data={getDetailedStats(selectedPlayer)}
                         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
@@ -378,9 +341,13 @@ export default function PlayerComparison() {
                         <YAxis />
                         <Tooltip />
                         <Legend />
-                        <Bar dataKey="value" name={selectedPlayer.name} fill="#3366CC" />
+                        <Bar dataKey="value" name={selectedPlayer.player} fill="#3366CC" />
                         {similarPlayers.length > 0 && (
-                          <Bar dataKey="value" name={similarPlayers[0].name} fill="#FF9933" />
+                          <Bar
+                            dataKey="value"
+                            name={similarPlayers[0].player}
+                            fill="#FF9933"
+                          />
                         )}
                       </BarChart>
                     </ResponsiveContainer>
@@ -392,21 +359,22 @@ export default function PlayerComparison() {
         )}
       </div>
 
-      {/* Player Details Dialog */}
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              {selectedPlayerForDetails?.name}
+              {selectedPlayerForDetails?.player}
               <Badge className="bg-blue-600">{selectedPlayerForDetails?.position}</Badge>
             </DialogTitle>
-            <DialogDescription>{selectedPlayerForDetails?.team}</DialogDescription>
+            <DialogDescription>{selectedPlayerForDetails?.stats.team}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <h4 className="font-medium">Similarity Score</h4>
-                <div className="text-2xl font-bold text-blue-600">{selectedPlayerForDetails?.similarity}%</div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {selectedPlayerForDetails && Math.round(selectedPlayerForDetails.similarity_score)}%
+                </div>
               </div>
               <div className="space-y-2">
                 <h4 className="font-medium">Playing Style</h4>
@@ -422,7 +390,7 @@ export default function PlayerComparison() {
               <h4 className="font-medium mb-2">Key Stats</h4>
               <div className="grid grid-cols-3 gap-2">
                 {selectedPlayerForDetails &&
-                  getDetailedStats(selectedPlayerForDetails.name).map((stat, index) => (
+                  getDetailedStats(selectedPlayerForDetails.stats).map((stat, index) => (
                     <div key={index} className="bg-slate-100 dark:bg-slate-800 p-2 rounded-md text-center">
                       <div className="text-sm text-slate-500">{stat.stat}</div>
                       <div className="font-bold">{stat.value}</div>
