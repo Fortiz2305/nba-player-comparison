@@ -145,7 +145,6 @@ class PlayerSimilarityService:
             print("Error: No player data available")
             raise ValueError("No player data available")
 
-        # Get player stats vector
         try:
             print(f"Looking for player in dataframe with shape: {self.df_norm.shape}")
             print(f"Available seasons: {self.df_norm['Season'].unique().tolist()}")
@@ -160,16 +159,13 @@ class PlayerSimilarityService:
             print(f"Unexpected error getting player stats vector: {str(e)}")
             raise
 
-        # Calculate distances to all other players
         distances = []
 
         try:
             for idx, row in self.df_norm.iterrows():
-                # Skip comparing the player to themselves in the same season
                 if row['Player'] == player_name and row['Season'] == season:
                     continue
 
-                # Get normalized stats for the compared player
                 compared_player_vector = np.array([
                     row.PTS_norm if hasattr(row, 'PTS_norm') else 0,
                     row.MP_norm if hasattr(row, 'MP_norm') else 0,
@@ -189,7 +185,6 @@ class PlayerSimilarityService:
                     row.BLK_norm if hasattr(row, 'BLK_norm') else 0
                 ])
 
-                # Calculate distance
                 distance = self._calculate_distance(player_stats_vector, compared_player_vector)
 
                 distances.append({
@@ -201,20 +196,16 @@ class PlayerSimilarityService:
                     'idx': idx
                 })
 
-            # Sort by distance (ascending)
             distances.sort(key=lambda x: x['distance'])
 
-            # Get the top N similar players
             similar_players = []
             for i in range(min(num_similar, len(distances))):
                 player_info = distances[i]
                 idx = player_info['idx']
                 player_row = self.df_norm.loc[idx]
 
-                # Convert to PlayerStats model
                 player_stats = self._row_to_player_stats(player_row)
 
-                # Create SimilarPlayer object
                 similar_player = SimilarPlayer(
                     player=player_info['player'],
                     season=player_info['season'],

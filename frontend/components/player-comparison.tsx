@@ -76,7 +76,7 @@ export default function PlayerComparison() {
     }
 
     fetchSeasons()
-  }, [])
+  }, [selectedSeason])
 
   useEffect(() => {
     const fetchPlayers = async () => {

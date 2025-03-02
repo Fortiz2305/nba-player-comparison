@@ -32,7 +32,7 @@ async def get_seasons(
     """
     if service.df is None or service.df.empty:
         return []
-    return sorted(service.df['Season'].unique().tolist())
+    return sorted(service.df['Season'].unique().tolist(), reverse=True)
 
 router.get("/seasons", response_model=List[str])(get_seasons)
 router.get("/seasons/", response_model=List[str])(get_seasons)
