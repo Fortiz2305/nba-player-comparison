@@ -1,0 +1,83 @@
+{
+  "app": {
+    "title": "NBA Player Similarity",
+    "description": "Find the most similar players in the league based on stats and playing style"
+  },
+  "loading": {
+    "data": "Loading data...",
+    "players": "Loading players..."
+  },
+  "error": {
+    "loadingData": "Error loading data",
+    "retry": "Retry"
+  },
+  "player": {
+    "select": "Select an NBA player...",
+    "search": "Search for a player...",
+    "notFound": "No player found.",
+    "noPlayers": "No players available",
+    "playersHeading": "Players",
+    "similarPlayers": "Most Similar Players",
+    "playingStyle": "Playing Style",
+    "similarityScore": "Similarity Score"
+  },
+  "season": {
+    "seasonsHeading": "Seasons"
+  },
+  "stats": {
+    "ppg": {
+      "abbr": "PPG",
+      "full": "Points Per Game"
+    },
+    "rpg": {
+      "abbr": "RPG",
+      "full": "Rebounds Per Game"
+    },
+    "apg": {
+      "abbr": "APG",
+      "full": "Assists Per Game"
+    },
+    "spg": {
+      "abbr": "SPG",
+      "full": "Steals Per Game"
+    },
+    "bpg": {
+      "abbr": "BPG",
+      "full": "Blocks Per Game"
+    },
+    "fg": {
+      "abbr": "FG%",
+      "full": "Field Goal Percentage"
+    },
+    "3pt": {
+      "abbr": "3P%",
+      "full": "Three Point Percentage"
+    },
+    "ft": {
+      "abbr": "FT%",
+      "full": "Free Throw Percentage"
+    }
+  },
+  "charts": {
+    "radar": "Radar",
+    "stats": "Stats"
+  },
+  "playingStyles": {
+    "eliteScorer": "Elite Scorer",
+    "scorer": "Scorer",
+    "elitePlaymaker": "Elite Playmaker",
+    "playmaker": "Playmaker",
+    "floorGeneral": "Floor General",
+    "eliteRebounder": "Elite Rebounder",
+    "rebounder": "Rebounder",
+    "eliteDefender": "Elite Defender",
+    "defender": "Defender",
+    "rimProtector": "Rim Protector",
+    "efficient": "Efficient",
+    "sharpshooter": "Sharpshooter",
+    "threePointShooter": "3PT Shooter",
+    "guard": "Guard",
+    "forward": "Forward",
+    "center": "Center"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "app": {
+    "title": "Similitud de Jugadores NBA",
+    "description": "Encuentra los jugadores más similares de la liga basados en estadísticas y estilo de juego"
+  },
+  "loading": {
+    "data": "Cargando datos...",
+    "players": "Cargando jugadores..."
+  },
+  "error": {
+    "loadingData": "Error al cargar datos",
+    "retry": "Reintentar"
+  },
+  "player": {
+    "select": "Selecciona un jugador de la NBA...",
+    "search": "Buscar un jugador...",
+    "notFound": "Jugador no encontrado.",
+    "noPlayers": "No hay jugadores disponibles",
+    "playersHeading": "Jugadores",
+    "similarPlayers": "Jugadores Más Similares",
+    "playingStyle": "Estilo de Juego",
+    "similarityScore": "Puntuación de Similitud"
+  },
+  "season": {
+    "seasonsHeading": "Temporadas"
+  },
+  "stats": {
+    "ppg": {
+      "abbr": "PPP",
+      "full": "Puntos Por Partido"
+    },
+    "rpg": {
+      "abbr": "RPP",
+      "full": "Rebotes Por Partido"
+    },
+    "apg": {
+      "abbr": "APP",
+      "full": "Asistencias Por Partido"
+    },
+    "spg": {
+      "abbr": "RPP",
+      "full": "Robos Por Partido"
+    },
+    "bpg": {
+      "abbr": "TPP",
+      "full": "Tapones Por Partido"
+    },
+    "fg": {
+      "abbr": "TC%",
+      "full": "Porcentaje de Tiros de Campo"
+    },
+    "3pt": {
+      "abbr": "3P%",
+      "full": "Porcentaje de Triples"
+    },
+    "ft": {
+      "abbr": "TL%",
+      "full": "Porcentaje de Tiros Libres"
+    }
+  },
+  "charts": {
+    "radar": "Radar",
+    "stats": "Estadísticas"
+  },
+  "playingStyles": {
+    "eliteScorer": "Anotador de Élite",
+    "scorer": "Anotador",
+    "elitePlaymaker": "Creador de Élite",
+    "playmaker": "Creador de Juego",
+    "floorGeneral": "General de Pista",
+    "eliteRebounder": "Reboteador de Élite",
+    "rebounder": "Reboteador",
+    "eliteDefender": "Defensor de Élite",
+    "defender": "Defensor",
+    "rimProtector": "Protector del Aro",
+    "efficient": "Eficiente",
+    "sharpshooter": "Tirador Preciso",
+    "threePointShooter": "Tirador de 3",
+    "guard": "Base",
+    "forward": "Alero",
+    "center": "Pívot"
+  }
+}

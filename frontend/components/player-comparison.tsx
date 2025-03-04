@@ -28,6 +28,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { getAllPlayers, getSimilarPlayers, calculateSkillRatings, getSeasons } from "@/lib/api"
 import { PlayerStats, SimilarPlayer, PlayerSkillRatings } from "@/types/player"
+import { useTranslations } from 'next-intl'
 
 interface RadarDataPoint {
   category: string
@@ -41,6 +42,7 @@ interface DetailedStat {
 }
 
 export default function PlayerComparison() {
+  const translations = useTranslations();
   const [open, setOpen] = useState(false)
   const [seasonOpen, setSeasonOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -165,40 +167,60 @@ export default function PlayerComparison() {
 
   const getDetailedStats = (player: PlayerStats): DetailedStat[] => {
     return [
-      { stat: "PPG", value: player.points_per_game, fullName: "Points Per Game" },
-      { stat: "RPG", value: player.total_rebounds_per_game, fullName: "Rebounds Per Game" },
-      { stat: "APG", value: player.assists_per_game, fullName: "Assists Per Game" },
-      { stat: "SPG", value: player.steals_per_game, fullName: "Steals Per Game" },
-      { stat: "BPG", value: player.blocks_per_game, fullName: "Blocks Per Game" },
-      { stat: "FG%", value: player.field_goal_percentage * 100, fullName: "Field Goal Percentage" },
+      {
+        stat: translations('stats.ppg.abbr'),
+        value: player.points_per_game,
+        fullName: translations('stats.ppg.full')
+      },
+      {
+        stat: translations('stats.rpg.abbr'),
+        value: player.total_rebounds_per_game,
+        fullName: translations('stats.rpg.full')
+      },
+      {
+        stat: translations('stats.apg.abbr'),
+        value: player.assists_per_game,
+        fullName: translations('stats.apg.full')
+      },
+      {
+        stat: translations('stats.spg.abbr'),
+        value: player.steals_per_game,
+        fullName: translations('stats.spg.full')
+      },
+      {
+        stat: translations('stats.bpg.abbr'),
+        value: player.blocks_per_game,
+        fullName: translations('stats.bpg.full')
+      },
+      {
+        stat: translations('stats.fg.abbr'),
+        value: player.field_goal_percentage * 100,
+        fullName: translations('stats.fg.full')
+      },
     ]
   }
 
   const getPlayerPlayingStyles = (player: PlayerStats): string[] => {
     const styles: string[] = []
 
-    // Scoring thresholds
     if (player.points_per_game >= 20) {
       styles.push("Elite Scorer")
     } else if (player.points_per_game >= 15) {
       styles.push("Scorer")
     }
 
-    // Playmaking thresholds
     if (player.assists_per_game >= 7) {
       styles.push("Elite Playmaker")
     } else if (player.assists_per_game >= 4) {
       styles.push("Playmaker")
     }
 
-    // Rebounding thresholds
     if (player.total_rebounds_per_game >= 10) {
       styles.push("Elite Rebounder")
     } else if (player.total_rebounds_per_game >= 7) {
       styles.push("Rebounder")
     }
 
-    // Defense thresholds (combining steals and blocks)
     const defensive_impact = player.steals_per_game + player.blocks_per_game
     if (defensive_impact >= 3) {
       styles.push("Elite Defender")
@@ -206,19 +228,16 @@ export default function PlayerComparison() {
       styles.push("Defender")
     }
 
-    // Efficiency threshold
     if (player.field_goal_percentage >= 0.55) {
       styles.push("Efficient")
     }
 
-    // Three-point shooting
     if (player.three_point_percentage >= 0.4 && player.three_point_attempts_per_game >= 3) {
       styles.push("Sharpshooter")
     } else if (player.three_point_percentage >= 0.35 && player.three_point_attempts_per_game >= 2) {
       styles.push("3PT Shooter")
     }
 
-    // Position-specific styles
     if (player.position.includes("C")) {
       if (player.blocks_per_game >= 1.5) {
         styles.push("Rim Protector")
@@ -231,7 +250,6 @@ export default function PlayerComparison() {
       }
     }
 
-    // If no styles are found, add a generic one based on position
     if (styles.length === 0) {
       if (player.position.includes("G")) {
         styles.push("Guard")
@@ -263,7 +281,7 @@ export default function PlayerComparison() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg">Loading data...</p>
+          <p className="text-lg">{translations('loading.data')}</p>
         </div>
       </div>
     )
@@ -273,13 +291,13 @@ export default function PlayerComparison() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center text-red-500">
-          <p className="text-lg mb-2">Error loading data</p>
+          <p className="text-lg mb-2">{translations('error.loadingData')}</p>
           <p>{errorMessage}</p>
           <Button
             className="mt-4"
             onClick={() => window.location.reload()}
           >
-            Retry
+            {translations('error.retry')}
           </Button>
         </div>
       </div>
@@ -304,7 +322,7 @@ export default function PlayerComparison() {
                   {isLoading ? (
                     <span className="flex items-center">
                       <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></span>
-                      Loading...
+                      {translations('loading.data')}
                     </span>
                   ) : (
                     formatSeasonDisplay(selectedSeason)
@@ -315,8 +333,8 @@ export default function PlayerComparison() {
               <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
                 <Command>
                   <CommandList>
-                    <CommandEmpty>No seasons found.</CommandEmpty>
-                    <CommandGroup heading="Seasons">
+                    <CommandEmpty>{translations('player.notFound')}</CommandEmpty>
+                    <CommandGroup heading={translations('season.seasonsHeading')}>
                       {availableSeasons.map((season) => (
                         <CommandItem
                           key={season}
@@ -352,22 +370,22 @@ export default function PlayerComparison() {
                   {isLoading ? (
                     <span className="flex items-center">
                       <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></span>
-                      Loading...
+                      {translations('loading.data')}
                     </span>
                   ) : selectedPlayer ? (
                     selectedPlayer.player
                   ) : (
-                    "Select an NBA player..."
+                    translations('player.select')
                   )}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
                 <Command>
-                  <CommandInput placeholder="Search for a player..." className="h-12" />
+                  <CommandInput placeholder={translations('player.search')} className="h-12" />
                   <CommandList>
-                    <CommandEmpty>No player found.</CommandEmpty>
-                    <CommandGroup heading="Players">
+                    <CommandEmpty>{translations('player.notFound')}</CommandEmpty>
+                    <CommandGroup heading={translations('player.playersHeading')}>
                       {availablePlayers && availablePlayers.length > 0 ? (
                         availablePlayers.map((player) => {
                           return (
@@ -396,7 +414,7 @@ export default function PlayerComparison() {
                         })
                       ) : (
                         <div className="p-4 text-center text-sm text-slate-500">
-                          {isLoading ? "Loading players..." : "No players available"}
+                          {isLoading ? translations('loading.players') : translations('player.noPlayers')}
                         </div>
                       )}
                     </CommandGroup>
@@ -421,15 +439,15 @@ export default function PlayerComparison() {
                   </div>
                   <Tabs defaultValue="radar" className="w-[200px]" onValueChange={setChartType}>
                     <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="radar">Radar</TabsTrigger>
-                      <TabsTrigger value="bar">Stats</TabsTrigger>
+                      <TabsTrigger value="radar">{translations('charts.radar')}</TabsTrigger>
+                      <TabsTrigger value="bar">{translations('charts.stats')}</TabsTrigger>
                     </TabsList>
                   </Tabs>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold mb-4">Most Similar Players</h3>
+                  <h3 className="text-xl font-semibold mb-4">{translations('player.similarPlayers')}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {similarPlayers.map((player) => (
                       <Card
@@ -541,19 +559,19 @@ export default function PlayerComparison() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <h4 className="font-medium">Similarity Score</h4>
+                <h4 className="font-medium">{translations('player.similarityScore')}</h4>
                 <div className="text-2xl font-bold text-blue-600">
                   {selectedPlayerForDetails && (selectedPlayerForDetails.similarity_score * 100).toFixed(2)}%
                 </div>
               </div>
               <div className="space-y-2">
-                <h4 className="font-medium">Playing Style</h4>
-                <div className="flex flex-wrap gap-1">
-                  {selectedPlayerForDetails &&
-                    getPlayerPlayingStyles(selectedPlayerForDetails.stats).map((style, index) => (
-                      <Badge key={index} variant="outline">{style}</Badge>
-                    ))
-                  }
+                <h4 className="font-medium">{translations('player.playingStyle')}</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedPlayerForDetails && getPlayerPlayingStyles(selectedPlayerForDetails.stats).map((style) => (
+                    <Badge key={style} variant="secondary" className="text-xs">
+                      {translations(`playingStyles.${style.toLowerCase().replace(/\s+/g, '')}`)}
+                    </Badge>
+                  ))}
                 </div>
               </div>
             </div>
