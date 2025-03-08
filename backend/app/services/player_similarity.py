@@ -1,90 +1,21 @@
 import pandas as pd
 import numpy as np
-import os
 from typing import List, Dict, Any, Tuple
 from ..models.player import PlayerStats, SimilarPlayer
+from ..repositories.player_repository import PlayerRepository
 
 
 class PlayerSimilarityService:
-    def __init__(self, data_dir: str = "../data"):
-        self.data_dir = data_dir
+    def __init__(self, player_repository: PlayerRepository):
+        self.player_repository = player_repository
         self.df = None
         self.df_norm = None
         self.load_data()
         self.normalize_data()
 
     def load_data(self) -> None:
-        """Load and process player data from CSV files"""
-        all_df_list = []
-
-        for file in os.listdir(self.data_dir):
-            if file.endswith('.csv'):
-                season = file.replace('.csv', '')
-                file_path = os.path.join(self.data_dir, file)
-
-                df = pd.read_csv(file_path, header=0)
-                formatted_df = self._format_dataframe(df, season)
-                all_df_list.append(formatted_df)
-
-        if all_df_list:
-            self.df = pd.concat(all_df_list)
-            # Aggregate players who played for multiple teams in the same season
-            self.df = self._aggregate_player_in_same_season(self.df)
-            # Remove players with fewer than 10 games played
-            self.df = self.df[self.df['G'] > 10]
-        else:
-            # If no files found, create an empty DataFrame with the expected columns
-            self.df = pd.DataFrame(columns=[
-                'Player', 'Season', 'Pos', 'Age', 'Team', 'G', 'GS', 'MP', 'PTS',
-                'FG', 'FGA', 'FG%', 'FG3', 'FG3A', 'FG3%', 'FG2', 'FG2A', 'FG2%',
-                'eFG%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL',
-                'BLK', 'TOV', 'PF', 'Player-additional'
-            ])
-
-    def _format_dataframe(self, df: pd.DataFrame, season: str) -> pd.DataFrame:
-        """Format the raw dataframe from CSV"""
-        result = df.drop(columns=['Rk'])
-        result.insert(loc=1, column='Season', value=season)
-        # Calculate effective field goal percentage if not already present
-        if 'eFG%' not in result.columns:
-            result['eFG%'] = (df['FG'] + 0.5 * df['3P']) / df['FGA']
-        # Rename columns for consistency
-        result = result.rename(columns={
-            '3P': 'FG3', '3PA': 'FG3A', '3P%': 'FG3%',
-            '2P': 'FG2', '2PA': 'FG2A', '2P%': 'FG2%'
-        })
-        return result
-
-    def _aggregate_player_in_same_season(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Aggregate stats for players who played for multiple teams in a season"""
-        return df.groupby(['Season', 'Player', 'Player-additional', 'Pos', 'Age']).agg({
-            'G': 'sum',
-            'GS': 'sum',
-            'MP': 'mean',
-            'PTS': 'mean',
-            'FG': 'mean',
-            'FGA': 'mean',
-            'FG%': 'mean',
-            'FG3': 'mean',
-            'FG3A': 'mean',
-            'FG3%': 'mean',
-            'FG2': 'mean',
-            'FG2A': 'mean',
-            'FG2%': 'mean',
-            'FT': 'mean',
-            'FTA': 'mean',
-            'FT%': 'mean',
-            'eFG%': 'mean',
-            'ORB': 'mean',
-            'DRB': 'mean',
-            'TRB': 'mean',
-            'AST': 'mean',
-            'STL': 'mean',
-            'BLK': 'mean',
-            'TOV': 'mean',
-            'PF': 'mean',
-            'Team': 'first'
-        }).reset_index()
+        """Load player data from the repository"""
+        self.df = self.player_repository.load_players_data()
 
     def normalize_data(self) -> None:
         """Normalize player statistics for comparison"""
@@ -270,13 +201,5 @@ class PlayerSimilarityService:
         )
 
     def get_all_players(self, season: str = None) -> List[Dict[str, Any]]:
-        if self.df is None or self.df.empty:
-            return []
-
-        if season:
-            players_df = self.df[self.df['Season'] == season]
-        else:
-            players_df = self.df
-
-        players = players_df[['Player', 'Season', 'Pos']].drop_duplicates().to_dict('records')
-        return players
+        """Get all players, optionally filtered by season"""
+        return self.player_repository.get_all_players(season)

@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Dict, Any
 from ..services.player_similarity import PlayerSimilarityService
 from ..models.player import PlayerQuery, SimilarPlayersResponse
+from ..repositories.file_player_repository import FilePlayerRepository
+from ..repositories.dynamodb_player_repository import DynamoDBPlayerRepository
+import os
 
 router = APIRouter(
     prefix="/players",
@@ -9,8 +12,26 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-def get_player_similarity_service():
-    return PlayerSimilarityService(data_dir="./data")
+def get_player_repository():
+    """
+    Factory function to get the appropriate player repository.
+
+    This can be switched between FilePlayerRepository and DynamoDBPlayerRepository
+    based on configuration or environment variables.
+    """
+    use_dynamodb = os.environ.get("USE_DYNAMODB", "false").lower() == "true"
+
+    if use_dynamodb:
+        table_name = os.environ.get("DYNAMODB_TABLE", "nba_player_stats")
+        return DynamoDBPlayerRepository(table_name=table_name)
+    else:
+        return FilePlayerRepository()
+
+def get_player_similarity_service(repository=Depends(get_player_repository)):
+    """
+    Factory function to get the PlayerSimilarityService with the appropriate repository.
+    """
+    return PlayerSimilarityService(player_repository=repository)
 
 async def get_players(
     season: str = Query(None, description="Filter players by season (e.g., '2023_24')"),
