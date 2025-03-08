@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import players
+from mangum import Mangum
 
 app = FastAPI(
     title="NBA Player Comparison API",
@@ -31,3 +32,5 @@ async def root():
             "similar_players": "/players/similar"
         }
     }
+
+handler = Mangum(app)

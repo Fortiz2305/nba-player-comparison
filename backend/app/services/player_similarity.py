@@ -35,7 +35,7 @@ class PlayerSimilarityService:
         else:
             # If no files found, create an empty DataFrame with the expected columns
             self.df = pd.DataFrame(columns=[
-                'Player', 'Season', 'Pos', 'Age', 'Tm', 'G', 'GS', 'MP', 'PTS',
+                'Player', 'Season', 'Pos', 'Age', 'Team', 'G', 'GS', 'MP', 'PTS',
                 'FG', 'FGA', 'FG%', 'FG3', 'FG3A', 'FG3%', 'FG2', 'FG2A', 'FG2%',
                 'eFG%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL',
                 'BLK', 'TOV', 'PF', 'Player-additional'
@@ -83,7 +83,7 @@ class PlayerSimilarityService:
             'BLK': 'mean',
             'TOV': 'mean',
             'PF': 'mean',
-            'Tm': 'first'  # Just take the first team
+            'Team': 'first'
         }).reset_index()
 
     def normalize_data(self) -> None:
@@ -240,7 +240,7 @@ class PlayerSimilarityService:
             season=row['Season'],
             position=row['Pos'],
             age=row['Age'],
-            team=row['Tm'],
+            team=row['Team'],
             games_played=row['G'],
             games_started=row['GS'],
             minutes_per_game=row['MP'],
