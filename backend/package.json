@@ -1,0 +1,15 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "This is the backend API for the NBA Player Comparison application. It provides endpoints to find similar NBA players based on statistical analysis using the K-nearest neighbors algorithm.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless-deployment-bucket": "^1.6.0"
+  }
+}

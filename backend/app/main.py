@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import players
 from mangum import Mangum
+import logging
 
 app = FastAPI(
     title="NBA Player Comparison API",
@@ -9,17 +10,21 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Add CORS middleware to allow requests from the frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include routers
 app.include_router(players.router)
+
+handler = Mangum(app, lifespan="off")
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger("mangum")
+logger.setLevel(logging.DEBUG)
 
 @app.get("/")
 async def root():
@@ -32,5 +37,3 @@ async def root():
             "similar_players": "/players/similar"
         }
     }
-
-handler = Mangum(app)

@@ -35,3 +35,5 @@ backend/**/*.egg
 backend/**/.pytest_cache/
 backend/**/.coverage
 backend/**/htmlcov/
+backend/.serverless/
+backend/node_modules/

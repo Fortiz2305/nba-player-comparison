@@ -1,0 +1,57 @@
+service: nba-player-comparison-api
+
+provider:
+  name: aws
+  region: eu-west-1
+  environment:
+    USE_DYNAMODB: true
+    DYNAMODB_TABLE: ${self:custom.tableName}
+  ecr:
+    images:
+      appimage:
+        path: ./
+        platform: linux/amd64
+        provenance: false
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: !GetAtt NbaPlayerStatsTable.Arn
+
+functions:
+  api:
+    image:
+      name: appimage
+      command:
+        - app.main.handler
+    events:
+      - httpApi: '*'
+
+resources:
+  Resources:
+    NbaPlayerStatsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: Season
+            AttributeType: S
+          - AttributeName: Player
+            AttributeType: S
+        KeySchema:
+          - AttributeName: Season
+            KeyType: HASH
+          - AttributeName: Player
+            KeyType: RANGE
+
+custom:
+  tableName: nba-player-stats-${self:provider.stage, 'dev'}
+
+plugins:
+  - serverless-deployment-bucket
