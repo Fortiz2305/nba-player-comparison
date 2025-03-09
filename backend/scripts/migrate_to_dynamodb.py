@@ -10,9 +10,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.repositories.file_player_repository import FilePlayerRepository
 
 
-def create_dynamodb_table(table_name="nba_player_stats"):
+def create_dynamodb_table(table_name):
     """Create the DynamoDB table if it doesn't exist"""
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = boto3.resource('dynamodb', region_name='eu-west-1')
 
     existing_tables = [table.name for table in dynamodb.tables.all()]
     if table_name in existing_tables:
@@ -49,11 +49,11 @@ def create_dynamodb_table(table_name="nba_player_stats"):
     return table
 
 
-def migrate_data_to_dynamodb(data_dir="../data", table_name="nba_player_stats"):
+def migrate_data_to_dynamodb(data_dir, table_name):
     """Migrate data from CSV files to DynamoDB"""
     create_dynamodb_table(table_name)
 
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = boto3.resource('dynamodb', region_name='eu-west-1')
     table = dynamodb.Table(table_name)
 
     file_repo = FilePlayerRepository(data_dir)
@@ -86,8 +86,8 @@ def migrate_data_to_dynamodb(data_dir="../data", table_name="nba_player_stats"):
 
 
 if __name__ == "__main__":
-    data_dir = sys.argv[1] if len(sys.argv) > 1 else "../data"
-    table_name = sys.argv[2] if len(sys.argv) > 2 else "nba_player_stats"
+    data_dir = sys.argv[1] if len(sys.argv) > 1 else "./data"
+    table_name = sys.argv[2] if len(sys.argv) > 2 else "nba-player-stats-dev"
 
     print(f"Migrating data from {data_dir} to DynamoDB table {table_name}")
     migrate_data_to_dynamodb(data_dir, table_name)
