@@ -2,10 +2,11 @@
 
 import PlayerComparison from "@/components/player-comparison"
 import Logo from "@/components/logo"
-import { useTranslations } from 'next-intl'
+import { useParams } from 'next/navigation'
 
 export default function Home() {
-  const translations = useTranslations();
+  const params = useParams();
+  const locale = params.locale as string;
 
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
@@ -14,9 +15,9 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center gap-4">
             <Logo />
             <div>
-              <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-50 mb-2">{translations('app.title')}</h1>
+              <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-50 mb-2">{locale === 'es' ? 'Comparación de Jugadores NBA' : 'NBA Player Comparison'}</h1>
               <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                {translations('app.description')}
+                {locale === 'es' ? 'Encuentra los jugadores más similares en la liga basados en estadísticas y estilo de juego' : 'Find the most similar players in the league based on stats and playing style'}
               </p>
             </div>
           </div>
