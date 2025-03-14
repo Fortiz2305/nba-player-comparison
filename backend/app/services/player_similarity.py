@@ -10,29 +10,25 @@ class PlayerSimilarityService:
         self.player_repository = player_repository
         self.df = None
         self.df_norm = None
-        self.load_data()
-        self.normalize_data()
+        self._data_loaded = False
 
     def load_data(self) -> None:
         """Load player data from the repository"""
-        self.df = self.player_repository.load_players_data()
+        if not self._data_loaded:
+            self.df = self.player_repository.load_players_data()
+            self._data_loaded = True
+            self.normalize_data()
 
     def normalize_data(self) -> None:
         """Normalize player statistics for comparison"""
         if self.df is None or self.df.empty:
             self.df_norm = pd.DataFrame()
             return
-
-        # Columns to normalize
         cols_to_norm = [
             'PTS', 'MP', 'FG', 'FGA', 'FG3', 'FG3A', 'FG2', 'FG2A',
             'FT', 'FTA', 'ORB', 'DRB', 'AST', 'STL', 'TOV', 'BLK'
         ]
-
-        # Create a copy of the dataframe
         self.df_norm = self.df.copy()
-
-        # Normalize each column within each season
         for season in self.df_norm['Season'].unique():
             season_mask = self.df_norm['Season'] == season
             for col in cols_to_norm:
@@ -40,7 +36,6 @@ class PlayerSimilarityService:
                 min_val = col_data.min()
                 max_val = col_data.max()
 
-                # Avoid division by zero
                 if max_val > min_val:
                     self.df_norm.loc[season_mask, f'{col}_norm'] = (col_data - min_val) / (max_val - min_val)
                 else:
@@ -70,6 +65,9 @@ class PlayerSimilarityService:
     def find_similar_players(self, player_name: str, season: str = "2023_24",
                             num_similar: int = 5) -> Tuple[PlayerStats, List[SimilarPlayer]]:
         """Find players most similar to the given player"""
+        # Ensure data is loaded before finding similar players
+        self.load_data()
+
         print(f"Finding similar players for {player_name} in season {season}")
 
         if self.df_norm is None or self.df_norm.empty:
@@ -148,7 +146,6 @@ class PlayerSimilarityService:
 
                 similar_players.append(similar_player)
 
-            # Get the query player's stats
             query_player_data = self.df_norm[(self.df_norm['Player'] == player_name) &
                                             (self.df_norm['Season'] == season)]
 
@@ -201,5 +198,7 @@ class PlayerSimilarityService:
         )
 
     def get_all_players(self, season: str = None) -> List[Dict[str, Any]]:
-        """Get all players, optionally filtered by season"""
         return self.player_repository.get_all_players(season)
+
+    def get_seasons(self) -> List[str]:
+        return self.player_repository.get_seasons()

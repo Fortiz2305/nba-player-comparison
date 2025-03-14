@@ -11,7 +11,6 @@ class FilePlayerRepository(PlayerRepository):
         self._load_data()
 
     def _load_data(self) -> None:
-        """Load and process player data from CSV files"""
         all_df_list = []
 
         for file in os.listdir(self.data_dir):
@@ -36,13 +35,10 @@ class FilePlayerRepository(PlayerRepository):
             ])
 
     def _format_dataframe(self, df: pd.DataFrame, season: str) -> pd.DataFrame:
-        """Format the raw dataframe from CSV"""
         result = df.drop(columns=['Rk'])
         result.insert(loc=1, column='Season', value=season)
-        # Calculate effective field goal percentage if not already present
         if 'eFG%' not in result.columns:
             result['eFG%'] = (df['FG'] + 0.5 * df['3P']) / df['FGA']
-        # Rename columns for consistency
         result = result.rename(columns={
             '3P': 'FG3', '3PA': 'FG3A', '3P%': 'FG3%',
             '2P': 'FG2', '2PA': 'FG2A', '2P%': 'FG2%'
@@ -50,7 +46,6 @@ class FilePlayerRepository(PlayerRepository):
         return result
 
     def _aggregate_player_in_same_season(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Aggregate stats for players who played for multiple teams in a season"""
         return df.groupby(['Season', 'Player', 'Player-additional', 'Pos', 'Age']).agg({
             'G': 'sum',
             'GS': 'sum',
@@ -81,11 +76,9 @@ class FilePlayerRepository(PlayerRepository):
         }).reset_index()
 
     def load_players_data(self) -> pd.DataFrame:
-        """Return the loaded player data as a DataFrame"""
         return self._df
 
     def get_all_players(self, season: Optional[str] = None) -> List[Dict[str, Any]]:
-        """Get all players, optionally filtered by season"""
         if self._df is None or self._df.empty:
             return []
 
@@ -96,3 +89,9 @@ class FilePlayerRepository(PlayerRepository):
 
         players = players_df[['Player', 'Season', 'Pos']].drop_duplicates().to_dict('records')
         return players
+
+    def get_seasons(self) -> List[str]:
+        if self._df is None or self._df.empty:
+            return []
+
+        return sorted(self._df['Season'].unique().tolist(), reverse=True)

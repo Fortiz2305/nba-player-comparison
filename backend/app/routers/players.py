@@ -13,14 +13,7 @@ router = APIRouter(
 )
 
 def get_player_repository():
-    """
-    Factory function to get the appropriate player repository.
-
-    This can be switched between FilePlayerRepository and DynamoDBPlayerRepository
-    based on configuration or environment variables.
-    """
     use_dynamodb = os.environ.get("USE_DYNAMODB", "false").lower() == "true"
-
     if use_dynamodb:
         table_name = os.environ.get("DYNAMODB_TABLE", "nba_player_stats")
         return DynamoDBPlayerRepository(table_name=table_name)
@@ -28,18 +21,12 @@ def get_player_repository():
         return FilePlayerRepository()
 
 def get_player_similarity_service(repository=Depends(get_player_repository)):
-    """
-    Factory function to get the PlayerSimilarityService with the appropriate repository.
-    """
     return PlayerSimilarityService(player_repository=repository)
 
 async def get_players(
     season: str = Query(None, description="Filter players by season (e.g., '2023_24')"),
     service: PlayerSimilarityService = Depends(get_player_similarity_service)
 ):
-    """
-    Get a list of all players, optionally filtered by season.
-    """
     return service.get_all_players(season)
 
 router.get("/", response_model=List[Dict[str, Any]])(get_players)
@@ -48,12 +35,7 @@ router.get("", response_model=List[Dict[str, Any]])(get_players)
 async def get_seasons(
     service: PlayerSimilarityService = Depends(get_player_similarity_service)
 ):
-    """
-    Get a list of all available seasons.
-    """
-    if service.df is None or service.df.empty:
-        return []
-    return sorted(service.df['Season'].unique().tolist(), reverse=True)
+    return service.get_seasons()
 
 router.get("/seasons", response_model=List[str])(get_seasons)
 router.get("/seasons/", response_model=List[str])(get_seasons)
@@ -63,9 +45,6 @@ async def find_similar_players_post(
     query: PlayerQuery,
     service: PlayerSimilarityService = Depends(get_player_similarity_service)
 ):
-    """
-    Find players most similar to the given player.
-    """
     try:
         query_player, similar_players = service.find_similar_players(
             player_name=query.player_name,
@@ -80,7 +59,6 @@ async def find_similar_players_post(
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        # Log the error for debugging
         print(f"Error in find_similar_players_post: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
@@ -94,9 +72,6 @@ async def find_similar_players_get(
     num_similar: int = Query(5, description="Number of similar players to return"),
     service: PlayerSimilarityService = Depends(get_player_similarity_service)
 ):
-    """
-    Find players most similar to the given player (GET endpoint).
-    """
     try:
         query_player, similar_players = service.find_similar_players(
             player_name=player_name,

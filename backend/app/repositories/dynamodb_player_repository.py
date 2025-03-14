@@ -11,7 +11,8 @@ class DynamoDBPlayerRepository(PlayerRepository):
         self.dynamodb = boto3.resource('dynamodb')
         self.table = self.dynamodb.Table(table_name)
         self._df = None
-        self._load_data()
+        self._seasons_cache = None
+        self._players_cache = {}
 
     def _load_data(self) -> None:
         """Load and process player data from DynamoDB"""
@@ -79,18 +80,88 @@ class DynamoDBPlayerRepository(PlayerRepository):
         }).reset_index()
 
     def load_players_data(self) -> pd.DataFrame:
-        """Return the loaded player data as a DataFrame"""
+        if self._df is None:
+            self._load_data()
         return self._df
 
     def get_all_players(self, season: Optional[str] = None) -> List[Dict[str, Any]]:
-        """Get all players, optionally filtered by season"""
-        if self._df is None or self._df.empty:
-            return []
+        cache_key = season if season else "all_seasons"
+        if cache_key in self._players_cache:
+            return self._players_cache[cache_key]
 
         if season:
-            players_df = self._df[self._df['Season'] == season]
-        else:
-            players_df = self._df
+            response = self.table.query(
+                KeyConditionExpression=Key('Season').eq(season),
+                ProjectionExpression='Player, Season, Pos',
+                Select='SPECIFIC_ATTRIBUTES'
+            )
+            items = response.get('Items', [])
 
-        players = players_df[['Player', 'Season', 'Pos']].drop_duplicates().to_dict('records')
+            while 'LastEvaluatedKey' in response:
+                response = self.table.query(
+                    KeyConditionExpression=Key('Season').eq(season),
+                    ProjectionExpression='Player, Season, Pos',
+                    ExclusiveStartKey=response['LastEvaluatedKey'],
+                    Select='SPECIFIC_ATTRIBUTES'
+                )
+                items.extend(response.get('Items', []))
+        else:
+            items = []
+            scan_kwargs = {
+                'ProjectionExpression': 'Player, Season, Pos',
+                'Select': 'SPECIFIC_ATTRIBUTES'
+            }
+            done = False
+
+            while not done:
+                response = self.table.scan(**scan_kwargs)
+                items.extend(response.get('Items', []))
+
+                if 'LastEvaluatedKey' in response:
+                    scan_kwargs['ExclusiveStartKey'] = response['LastEvaluatedKey']
+                else:
+                    done = True
+
+        players = []
+        seen = set()
+
+        for item in items:
+            key = (item.get('Player', ''), item.get('Season', ''))
+            if key not in seen:
+                seen.add(key)
+                players.append({
+                    'Player': item.get('Player', ''),
+                    'Season': item.get('Season', ''),
+                    'Pos': item.get('Pos', '')
+                })
+
+        self._players_cache[cache_key] = players
         return players
+
+    def get_seasons(self) -> List[str]:
+        if self._seasons_cache is not None:
+            return self._seasons_cache
+
+        response = self.table.scan(
+            ProjectionExpression='Season',
+            Select='SPECIFIC_ATTRIBUTES'
+        )
+
+        seasons = set()
+        for item in response.get('Items', []):
+            if 'Season' in item:
+                seasons.add(item['Season'])
+
+        while 'LastEvaluatedKey' in response:
+            response = self.table.scan(
+                ProjectionExpression='Season',
+                ExclusiveStartKey=response['LastEvaluatedKey'],
+                Select='SPECIFIC_ATTRIBUTES'
+            )
+
+            for item in response.get('Items', []):
+                if 'Season' in item:
+                    seasons.add(item['Season'])
+
+        self._seasons_cache = sorted(list(seasons), reverse=True)
+        return self._seasons_cache

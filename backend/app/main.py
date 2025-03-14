@@ -22,10 +22,6 @@ app.include_router(players.router)
 
 handler = Mangum(app, lifespan="off")
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger("mangum")
-logger.setLevel(logging.DEBUG)
-
 @app.get("/")
 async def root():
     return {
