@@ -25,6 +25,7 @@ provider:
 
 functions:
   api:
+    timeout: 20
     image:
       name: appimage
       command:
