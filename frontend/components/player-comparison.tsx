@@ -279,10 +279,10 @@ export default function PlayerComparison() {
 
   if (isLoading && availablePlayers.length === 0 && availableSeasons.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-64 px-4 sm:px-6 md:px-8 max-w-[1200px] mx-auto">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg">{translations('loading.data')}</p>
+          <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-primary mx-auto mb-3 sm:mb-4"></div>
+          <p className="text-base sm:text-lg">{translations('loading.data')}</p>
         </div>
       </div>
     )
@@ -290,10 +290,10 @@ export default function PlayerComparison() {
 
   if (hasError) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-64 px-4 sm:px-6 md:px-8 max-w-[1200px] mx-auto">
         <div className="text-center text-red-500">
-          <p className="text-lg mb-2">{translations('error.loadingData')}</p>
-          <p>{errorMessage}</p>
+          <p className="text-base sm:text-lg mb-2">{translations('error.loadingData')}</p>
+          <p className="text-sm sm:text-base">{errorMessage}</p>
           <Button
             className="mt-4"
             onClick={() => window.location.reload()}
@@ -306,19 +306,19 @@ export default function PlayerComparison() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 px-4 sm:px-6 md:px-8 max-w-[1200px] mx-auto">
       {isPlayerLoading && <BasketballLoader />}
 
-      <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="flex flex-col items-center justify-center space-y-4 w-full">
         <div className="w-full max-w-md space-y-4">
-          <div className="flex gap-4">
+          <div className="flex gap-2 sm:gap-4 w-full">
             <Popover open={seasonOpen} onOpenChange={setSeasonOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   role="combobox"
                   aria-expanded={seasonOpen}
-                  className="w-1/3 justify-between bg-white dark:bg-slate-900 border-2 h-14 text-lg"
+                  className="w-1/3 justify-between bg-white dark:bg-slate-900 border-2 h-12 sm:h-14 text-base sm:text-lg"
                   onClick={() => setSeasonOpen(!seasonOpen)}
                   disabled={isLoading || isPlayerLoading || availableSeasons.length === 0}
                 >
@@ -328,9 +328,9 @@ export default function PlayerComparison() {
                       {translations('loading.data')}
                     </span>
                   ) : (
-                    formatSeasonDisplay(selectedSeason)
+                    <span className="truncate">{formatSeasonDisplay(selectedSeason)}</span>
                   )}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-shrink-0" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
@@ -366,7 +366,7 @@ export default function PlayerComparison() {
                   variant="outline"
                   role="combobox"
                   aria-expanded={open}
-                  className="w-2/3 justify-between bg-white dark:bg-slate-900 border-2 h-14 text-lg"
+                  className="w-2/3 justify-between bg-white dark:bg-slate-900 border-2 h-12 sm:h-14 text-base sm:text-lg"
                   onClick={() => setOpen(!open)}
                   disabled={isLoading || isPlayerLoading || availablePlayers.length === 0}
                 >
@@ -376,11 +376,11 @@ export default function PlayerComparison() {
                       {translations('loading.data')}
                     </span>
                   ) : selectedPlayer ? (
-                    selectedPlayer.player
+                    <span className="truncate">{selectedPlayer.player}</span>
                   ) : (
-                    translations('player.select')
+                    <span className="truncate">{translations('player.select')}</span>
                   )}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-shrink-0" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
@@ -431,10 +431,10 @@ export default function PlayerComparison() {
         {selectedPlayer && !isPlayerLoading && (
           <div className="w-full">
             <Card className="bg-white dark:bg-slate-900 shadow-lg border-0">
-              <CardHeader>
+              <CardHeader className="p-4 sm:p-6">
                 <div className="flex justify-between items-center flex-wrap gap-4">
                   <div>
-                    <CardTitle className="text-2xl">
+                    <CardTitle className="text-xl sm:text-2xl">
                       {selectedPlayer.player}
                       <Badge className="ml-2 bg-blue-600">{selectedPlayer.position}</Badge>
                     </CardTitle>
@@ -470,21 +470,21 @@ export default function PlayerComparison() {
                   {translations('player.backToSelection')}
                 </Button>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6">
                 <div className="mb-6">
                   <h3 className="text-xl font-semibold mb-4">{translations('player.similarPlayers')}</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                     {similarPlayers.map((player) => (
                       <Card
                         key={player.player}
                         className="cursor-pointer hover:shadow-md transition-shadow"
                         onClick={() => handlePlayerClick(player)}
                       >
-                        <CardContent className="p-4">
+                        <CardContent className="p-3 sm:p-4">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="font-semibold">{player.player}</p>
-                              <p className="text-sm text-slate-500">{player.stats.team}</p>
+                              <p className="font-semibold text-sm sm:text-base">{player.player}</p>
+                              <p className="text-xs sm:text-sm text-slate-500">{player.stats.team}</p>
                               <p className="text-xs text-slate-400">{formatSeasonDisplay(player.season)}</p>
                             </div>
                             <Badge
@@ -494,7 +494,7 @@ export default function PlayerComparison() {
                                   : player.similarity_score > 0.8
                                     ? "bg-blue-600"
                                     : "bg-orange-500"
-                              }`}
+                              } text-xs sm:text-sm`}
                             >
                               {Math.round(player.similarity_score * 100)}%
                             </Badge>
@@ -505,7 +505,7 @@ export default function PlayerComparison() {
                   </div>
                 </div>
 
-                <div className="h-[400px] mt-8">
+                <div className="h-[300px] sm:h-[400px] mt-6 sm:mt-8">
                   {chartType === "radar" ? (
                     <ResponsiveContainer width="100%" height="100%">
                       <RadarChart data={getRadarData()}>
@@ -540,7 +540,7 @@ export default function PlayerComparison() {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
                         data={getDetailedStats(selectedPlayer)}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                        margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="stat" />
@@ -571,9 +571,9 @@ export default function PlayerComparison() {
       </div>
 
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] p-4 sm:p-6">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
               {selectedPlayerForDetails?.player}
               <Badge className="bg-blue-600">{selectedPlayerForDetails?.position}</Badge>
             </DialogTitle>
@@ -585,7 +585,7 @@ export default function PlayerComparison() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <h4 className="font-medium">{translations('player.similarityScore')}</h4>
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-xl sm:text-2xl font-bold text-blue-600">
                   {selectedPlayerForDetails && (selectedPlayerForDetails.similarity_score * 100).toFixed(2)}%
                 </div>
               </div>
@@ -620,7 +620,7 @@ export default function PlayerComparison() {
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                      <div className="font-bold">{stat.value.toFixed(2)}</div>
+                      <div className="font-bold text-sm sm:text-base">{stat.value.toFixed(2)}</div>
                     </div>
                   ))}
               </div>
