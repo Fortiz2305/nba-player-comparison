@@ -5,7 +5,13 @@
   },
   "loading": {
     "data": "Loading data...",
-    "players": "Loading players..."
+    "players": "Loading players...",
+    "findingSimilarPlayers": "Finding similar players...",
+    "analyzingStats": "Analyzing player statistics...",
+    "calculatingSkills": "Calculating skill ratings...",
+    "comparingStyles": "Comparing playing styles...",
+    "almostDone": "Almost there...",
+    "pleaseWait": "This may take a few seconds"
   },
   "error": {
     "loadingData": "Error loading data",
@@ -19,7 +25,8 @@
     "playersHeading": "Players",
     "similarPlayers": "Most Similar Players",
     "playingStyle": "Playing Style",
-    "similarityScore": "Similarity Score"
+    "similarityScore": "Similarity Score",
+    "backToSelection": "Back to Player Selection"
   },
   "season": {
     "seasonsHeading": "Seasons"
@@ -61,6 +68,13 @@
   "charts": {
     "radar": "Radar",
     "stats": "Stats"
+  },
+  "skills": {
+    "scoring": "Scoring",
+    "playmaking": "Playmaking",
+    "defense": "Defense",
+    "athleticism": "Athleticism",
+    "basketball_iq": "Basketball IQ"
   },
   "playingStyles": {
     "eliteScorer": "Elite Scorer",

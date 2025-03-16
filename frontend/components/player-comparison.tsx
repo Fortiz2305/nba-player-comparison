@@ -29,6 +29,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { getAllPlayers, getSimilarPlayers, calculateSkillRatings, getSeasons } from "@/lib/api"
 import { PlayerStats, SimilarPlayer, PlayerSkillRatings } from "@/types/player"
 import { useTranslations } from 'next-intl'
+import { BasketballLoader } from "@/components/BasketballLoader"
 
 interface RadarDataPoint {
   category: string
@@ -46,6 +47,7 @@ export default function PlayerComparison() {
   const [open, setOpen] = useState(false)
   const [seasonOpen, setSeasonOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isPlayerLoading, setIsPlayerLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
   const [availablePlayers, setAvailablePlayers] = useState<PlayerStats[]>([])
@@ -57,7 +59,7 @@ export default function PlayerComparison() {
   const [chartType, setChartType] = useState("radar")
   const [selectedPlayerForDetails, setSelectedPlayerForDetails] = useState<SimilarPlayer | null>(null)
   const [showDetailsDialog, setShowDetailsDialog] = useState(false)
-  const [selectedSeason, setSelectedSeason] = useState<string>("2023_24")
+  const [selectedSeason, setSelectedSeason] = useState<string>("2024_25")
 
   useEffect(() => {
     const fetchSeasons = async () => {
@@ -109,8 +111,9 @@ export default function PlayerComparison() {
 
   const handlePlayerSelect = async (playerName: string) => {
     try {
-      setIsLoading(true)
+      setIsPlayerLoading(true)
       setHasError(false)
+      setOpen(false)
 
       const player = availablePlayers.find(p => p.player === playerName)
       if (!player) return
@@ -128,14 +131,12 @@ export default function PlayerComparison() {
         skillsMap.set(`${player.player} (${player.season})`, calculateSkillRatings(player.stats))
       })
       setSimilarPlayersSkills(skillsMap)
-
-      setOpen(false)
     } catch (error) {
       setHasError(true)
       setErrorMessage(error instanceof Error ? error.message : "Failed to fetch similar players")
       console.error('Error fetching similar players:', error)
     } finally {
-      setIsLoading(false)
+      setIsPlayerLoading(false)
     }
   }
 
@@ -149,7 +150,7 @@ export default function PlayerComparison() {
 
     const categories = ["scoring", "playmaking", "defense", "athleticism", "basketball_iq"]
     return categories.map((category) => {
-      const data: RadarDataPoint = { category }
+      const data: RadarDataPoint = { category: translations(`skills.${category}`) }
 
       data[`${selectedPlayer.player} (${selectedPlayer.season})`] = selectedPlayerSkills[category as keyof PlayerSkillRatings]
 
@@ -306,6 +307,8 @@ export default function PlayerComparison() {
 
   return (
     <div className="space-y-8">
+      {isPlayerLoading && <BasketballLoader />}
+
       <div className="flex flex-col items-center justify-center space-y-4">
         <div className="w-full max-w-md space-y-4">
           <div className="flex gap-4">
@@ -317,7 +320,7 @@ export default function PlayerComparison() {
                   aria-expanded={seasonOpen}
                   className="w-1/3 justify-between bg-white dark:bg-slate-900 border-2 h-14 text-lg"
                   onClick={() => setSeasonOpen(!seasonOpen)}
-                  disabled={isLoading || availableSeasons.length === 0}
+                  disabled={isLoading || isPlayerLoading || availableSeasons.length === 0}
                 >
                   {isLoading ? (
                     <span className="flex items-center">
@@ -357,7 +360,7 @@ export default function PlayerComparison() {
               </PopoverContent>
             </Popover>
 
-            <Popover open={open} onOpenChange={setOpen}>
+            <Popover open={open && !isPlayerLoading} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -365,7 +368,7 @@ export default function PlayerComparison() {
                   aria-expanded={open}
                   className="w-2/3 justify-between bg-white dark:bg-slate-900 border-2 h-14 text-lg"
                   onClick={() => setOpen(!open)}
-                  disabled={isLoading || availablePlayers.length === 0}
+                  disabled={isLoading || isPlayerLoading || availablePlayers.length === 0}
                 >
                   {isLoading ? (
                     <span className="flex items-center">
@@ -425,11 +428,11 @@ export default function PlayerComparison() {
           </div>
         </div>
 
-        {selectedPlayer && (
+        {selectedPlayer && !isPlayerLoading && (
           <div className="w-full">
             <Card className="bg-white dark:bg-slate-900 shadow-lg border-0">
               <CardHeader>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center flex-wrap gap-4">
                   <div>
                     <CardTitle className="text-2xl">
                       {selectedPlayer.player}
@@ -437,13 +440,35 @@ export default function PlayerComparison() {
                     </CardTitle>
                     <CardDescription>{selectedPlayer.team}</CardDescription>
                   </div>
-                  <Tabs defaultValue="radar" className="w-[200px]" onValueChange={setChartType}>
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="radar">{translations('charts.radar')}</TabsTrigger>
-                      <TabsTrigger value="bar">{translations('charts.stats')}</TabsTrigger>
-                    </TabsList>
-                  </Tabs>
+                  <div className="flex items-center gap-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedPlayer(null);
+                        setSimilarPlayers([]);
+                      }}
+                      className="hidden sm:flex"
+                    >
+                      {translations('player.backToSelection')}
+                    </Button>
+                    <Tabs defaultValue="radar" className="w-[200px]" onValueChange={setChartType}>
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="radar">{translations('charts.radar')}</TabsTrigger>
+                        <TabsTrigger value="bar">{translations('charts.stats')}</TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                  </div>
                 </div>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSelectedPlayer(null);
+                    setSimilarPlayers([]);
+                  }}
+                  className="mt-4 w-full sm:hidden"
+                >
+                  {translations('player.backToSelection')}
+                </Button>
               </CardHeader>
               <CardContent>
                 <div className="mb-6">

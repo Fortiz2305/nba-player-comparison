@@ -5,21 +5,28 @@
   },
   "loading": {
     "data": "Cargando datos...",
-    "players": "Cargando jugadores..."
+    "players": "Cargando jugadores...",
+    "findingSimilarPlayers": "Buscando jugadores similares...",
+    "analyzingStats": "Analizando estadísticas del jugador...",
+    "calculatingSkills": "Calculando habilidades...",
+    "comparingStyles": "Comparando estilos de juego...",
+    "almostDone": "Casi listo...",
+    "pleaseWait": "Esto puede tardar unos segundos"
   },
   "error": {
     "loadingData": "Error al cargar datos",
     "retry": "Reintentar"
   },
   "player": {
-    "select": "Selecciona un jugador de la NBA...",
-    "search": "Buscar un jugador...",
+    "select": "Selecciona un jugador",
+    "search": "Buscar un jugador",
     "notFound": "Jugador no encontrado.",
     "noPlayers": "No hay jugadores disponibles",
     "playersHeading": "Jugadores",
     "similarPlayers": "Jugadores Más Similares",
     "playingStyle": "Estilo de Juego",
-    "similarityScore": "Puntuación de Similitud"
+    "similarityScore": "Puntuación de Similitud",
+    "backToSelection": "Volver a Selección de Jugador"
   },
   "season": {
     "seasonsHeading": "Temporadas"
@@ -61,6 +68,13 @@
   "charts": {
     "radar": "Radar",
     "stats": "Estadísticas"
+  },
+  "skills": {
+    "scoring": "Anotación",
+    "playmaking": "Creación de Juego",
+    "defense": "Defensa",
+    "athleticism": "Físico",
+    "basketball_iq": "IQ Baloncestístico"
   },
   "playingStyles": {
     "eliteScorer": "Anotador de Élite",
