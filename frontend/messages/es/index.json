@@ -93,5 +93,46 @@
     "guard": "Base",
     "forward": "Alero",
     "center": "Pívot"
+  },
+  "infoDialog": {
+    "title": "Herramienta de Similitud de Jugadores NBA",
+    "description": "Aprende a usar esta herramienta y comprende los datos",
+    "howToUse": "Cómo Usar",
+    "understandingData": "Entendiendo los Datos",
+    "introduction": "Esta herramienta te ayuda a encontrar jugadores de la NBA con estilos de juego y perfiles estadísticos similares. Sigue estos simples pasos:",
+    "help": "Ayuda",
+    "needHelp": "¿Necesitas ayuda?",
+    "clickHere": "Haz clic aquí",
+    "steps": {
+      "selectSeason": "Selecciona una temporada del primer menú desplegable. Puedes utilizar cualquier temporada de los últimos 30 años",
+      "selectPlayer": "Selecciona un jugador del segundo menú desplegable. Puedes buscar escribiendo el nombre de un jugador.",
+      "similarPlayers": "El sistema mostrará automáticamente los jugadores más similares basándose en un algoritmo de similitud. Para esto utiliza estadísticas de los últimos 30 años, y emplea el algoritmo K-vecinos más próximos para identificar jugadores similares.",
+      "toggleViews": "Alterna entre las vistas de Radar y Estadísticas para ver diferentes visualizaciones de las comparaciones de jugadores.",
+      "radarChart": "El gráfico de radar muestra cómo se comparan los jugadores en cinco atributos clave.",
+      "backToSelection": "Haz clic en \"Volver a Selección de Jugador\" para elegir otro jugador."
+    },
+    "tip": "Consejo: El porcentaje de similitud indica cuán cerca están el estilo y las estadísticas de un jugador a las del jugador seleccionado.",
+    "modelExplanation": "Nuestro modelo de similitud de jugadores analiza múltiples dimensiones del rendimiento y estilo de juego:",
+    "radarCategories": {
+      "title": "Categorías del Gráfico Radar",
+      "scoring": "Anotación: Habilidad para anotar puntos mediante diversos métodos",
+      "playmaking": "Creación de Juego: Pases, visión de campo y generación de asistencias",
+      "defense": "Defensa: Impacto defensivo, robos, tapones y posicionamiento",
+      "athleticism": "Físico: Velocidad, salto vertical y atributos físicos",
+      "basketballIQ": "IQ Baloncestístico: Conciencia de juego y toma de decisiones"
+    },
+    "statisticalMeasures": {
+      "title": "Medidas Estadísticas",
+      "ppg": "PPP: Puntos Por Partido",
+      "rpg": "RPP: Rebotes Por Partido",
+      "apg": "APP: Asistencias Por Partido",
+      "spg": "RPP: Robos Por Partido",
+      "bpg": "TPP: Tapones Por Partido",
+      "fg": "TC%: Porcentaje de Tiros de Campo"
+    },
+    "algorithmExplanation": "Nuestro algoritmo de similitud combina estas métricas con estadísticas avanzadas como el porcentaje de uso, el porcentaje de tiro efectivo y métricas defensivas para crear un perfil completo del jugador.",
+    "historicalContext": "Contexto Histórico: Todos los cálculos se basan en estadísticas de jugadores de los últimos 30 años, proporcionando una rica perspectiva histórica.",
+    "dataSource": "Fuente de Datos: Los datos provienen de Basketball Reference, garantizando precisión y profundidad.",
+    "similiarityNote": "Nota: Las puntuaciones de similitud son relativas y están basadas en las estadísticas de la temporada seleccionada."
   }
 }

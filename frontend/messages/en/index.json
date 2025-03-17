@@ -93,5 +93,46 @@
     "guard": "Guard",
     "forward": "Forward",
     "center": "Center"
+  },
+  "infoDialog": {
+    "title": "NBA Player Similarity Tool",
+    "description": "Learn how to use this tool and understand the data",
+    "howToUse": "How to Use",
+    "understandingData": "Understanding Data",
+    "introduction": "This tool helps you find NBA players with similar playing styles and statistical profiles. Follow these simple steps:",
+    "help": "Help",
+    "needHelp": "Need help?",
+    "clickHere": "Click here",
+    "steps": {
+      "selectSeason": "Select a season from the first dropdown menu. The tool uses data from the last 30 years to ensure comprehensive analysis.",
+      "selectPlayer": "Select a player from the second dropdown menu. You can search by typing a player's name.",
+      "similarPlayers": "The system will automatically display the most similar players based on a similarity algorithm. To do this, it uses player stats from the last 30 years, and employs the K-nearest neighbors algorithm to identify similar players.",
+      "toggleViews": "Toggle between Radar and Stats views to see different visualizations of player comparisons.",
+      "radarChart": "The radar chart shows how players compare across five key attributes.",
+      "backToSelection": "Click \"Back to Player Selection\" to choose a different player."
+    },
+    "tip": "Tip: The similarity percentage indicates how closely a player's style and statistics match your selected player.",
+    "modelExplanation": "Our player similarity model analyzes multiple dimensions of player performance and style:",
+    "radarCategories": {
+      "title": "Radar Chart Categories",
+      "scoring": "Scoring: Ability to score points through various methods",
+      "playmaking": "Playmaking: Passing, court vision, and assist generation",
+      "defense": "Defense: Defensive impact, steals, blocks, and positioning",
+      "athleticism": "Athleticism: Speed, vertical leap, and physical attributes",
+      "basketballIQ": "Basketball IQ: Game awareness and decision-making"
+    },
+    "statisticalMeasures": {
+      "title": "Statistical Measures",
+      "ppg": "PPG: Points Per Game",
+      "rpg": "RPG: Rebounds Per Game",
+      "apg": "APG: Assists Per Game",
+      "spg": "SPG: Steals Per Game",
+      "bpg": "BPG: Blocks Per Game",
+      "fg": "FG%: Field Goal Percentage"
+    },
+    "algorithmExplanation": "Our similarity algorithm combines these metrics with advanced statistics like usage rate, true shooting percentage, and defensive metrics to create a comprehensive player profile.",
+    "historicalContext": "Historical Context: All calculations are based on player stats from the last 30 years, providing a rich historical perspective.",
+    "dataSource": "Data Source: The data is sourced from Basketball Reference, ensuring accuracy and depth.",
+    "similiarityNote": "Note: Similarity scores are relative and based on the selected season's statistics."
   }
 }
