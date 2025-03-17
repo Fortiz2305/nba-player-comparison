@@ -26,7 +26,9 @@
     "similarPlayers": "Most Similar Players",
     "playingStyle": "Playing Style",
     "similarityScore": "Similarity Score",
-    "backToSelection": "Back to Player Selection"
+    "backToSelection": "Back to Player Selection",
+    "keyStats": "Key Stats",
+    "close": "Close"
   },
   "season": {
     "seasonsHeading": "Seasons"
@@ -77,22 +79,23 @@
     "basketball_iq": "Basketball IQ"
   },
   "playingStyles": {
-    "eliteScorer": "Elite Scorer",
+    "elitescorer": "Elite Scorer",
     "scorer": "Scorer",
-    "elitePlaymaker": "Elite Playmaker",
+    "eliteplaymaker": "Elite Playmaker",
     "playmaker": "Playmaker",
-    "floorGeneral": "Floor General",
-    "eliteRebounder": "Elite Rebounder",
+    "floorgeneral": "Floor General",
+    "eliterebounder": "Elite Rebounder",
     "rebounder": "Rebounder",
-    "eliteDefender": "Elite Defender",
+    "elitedefender": "Elite Defender",
     "defender": "Defender",
-    "rimProtector": "Rim Protector",
+    "rimprotector": "Rim Protector",
     "efficient": "Efficient",
     "sharpshooter": "Sharpshooter",
-    "threePointShooter": "3PT Shooter",
+    "threepointshooter": "3PT Shooter",
     "guard": "Guard",
     "forward": "Forward",
-    "center": "Center"
+    "center": "Center",
+    "roleplayer": "Role Player"
   },
   "infoDialog": {
     "title": "NBA Player Similarity Tool",

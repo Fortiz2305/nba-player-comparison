@@ -222,61 +222,61 @@ export default function PlayerComparison() {
     const styles: string[] = []
 
     if (player.points_per_game >= 20) {
-      styles.push("Elite Scorer")
+      styles.push("elite scorer")
     } else if (player.points_per_game >= 15) {
-      styles.push("Scorer")
+      styles.push("scorer")
     }
 
     if (player.assists_per_game >= 7) {
-      styles.push("Elite Playmaker")
+      styles.push("elite playmaker")
     } else if (player.assists_per_game >= 4) {
-      styles.push("Playmaker")
+      styles.push("playmaker")
     }
 
     if (player.total_rebounds_per_game >= 10) {
-      styles.push("Elite Rebounder")
+      styles.push("elite rebounder")
     } else if (player.total_rebounds_per_game >= 7) {
-      styles.push("Rebounder")
+      styles.push("rebounder")
     }
 
     const defensive_impact = player.steals_per_game + player.blocks_per_game
     if (defensive_impact >= 3) {
-      styles.push("Elite Defender")
+      styles.push("elite defender")
     } else if (defensive_impact >= 1.5) {
-      styles.push("Defender")
+      styles.push("defender")
     }
 
     if (player.field_goal_percentage >= 0.55) {
-      styles.push("Efficient")
+      styles.push("efficient")
     }
 
     if (player.three_point_percentage >= 0.4 && player.three_point_attempts_per_game >= 3) {
-      styles.push("Sharpshooter")
+      styles.push("sharpshooter")
     } else if (player.three_point_percentage >= 0.35 && player.three_point_attempts_per_game >= 2) {
-      styles.push("3PT Shooter")
+      styles.push("three point shooter")
     }
 
     if (player.position.includes("C")) {
       if (player.blocks_per_game >= 1.5) {
-        styles.push("Rim Protector")
+        styles.push("rim protector")
       }
     }
 
     if (player.position.includes("PG")) {
       if (player.assists_per_game >= 8) {
-        styles.push("Floor General")
+        styles.push("floor general")
       }
     }
 
     if (styles.length === 0) {
       if (player.position.includes("G")) {
-        styles.push("Guard")
+        styles.push("guard")
       } else if (player.position.includes("F")) {
-        styles.push("Forward")
+        styles.push("forward")
       } else if (player.position.includes("C")) {
-        styles.push("Center")
+        styles.push("center")
       } else {
-        styles.push("Role Player")
+        styles.push("role player")
       }
     }
 
@@ -696,7 +696,7 @@ export default function PlayerComparison() {
                 <div className="flex flex-wrap gap-2">
                   {selectedPlayerForDetails && getPlayerPlayingStyles(selectedPlayerForDetails.stats).map((style) => (
                     <Badge key={style} variant="secondary" className="text-xs">
-                      {translations(`playingStyles.${style.toLowerCase().replace(/\s+/g, '')}`)}
+                      {translations(`playingStyles.${style.replace(/\s+/g, '')}`)}
                     </Badge>
                   ))}
                 </div>
@@ -704,7 +704,7 @@ export default function PlayerComparison() {
             </div>
 
             <div>
-              <h4 className="font-medium mb-2">Key Stats</h4>
+              <h4 className="font-medium mb-2">{translations('player.keyStats')}</h4>
               <div className="grid grid-cols-3 gap-2">
                 {selectedPlayerForDetails &&
                   getDetailedStats(selectedPlayerForDetails.stats).map((stat, index) => (
@@ -730,7 +730,7 @@ export default function PlayerComparison() {
 
             <div className="pt-2">
               <Button className="w-full" onClick={() => setShowDetailsDialog(false)}>
-                Close
+                {translations('player.close')}
               </Button>
             </div>
           </div>

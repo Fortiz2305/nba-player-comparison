@@ -26,7 +26,9 @@
     "similarPlayers": "Jugadores Más Similares",
     "playingStyle": "Estilo de Juego",
     "similarityScore": "Puntuación de Similitud",
-    "backToSelection": "Volver a Selección de Jugador"
+    "backToSelection": "Volver a Selección de Jugador",
+    "keyStats": "Estadísticas Clave",
+    "close": "Cerrar"
   },
   "season": {
     "seasonsHeading": "Temporadas"
@@ -77,22 +79,23 @@
     "basketball_iq": "IQ Baloncestístico"
   },
   "playingStyles": {
-    "eliteScorer": "Anotador de Élite",
+    "elitescorer": "Anotador de Élite",
     "scorer": "Anotador",
-    "elitePlaymaker": "Creador de Élite",
+    "eliteplaymaker": "Creador de Élite",
     "playmaker": "Creador de Juego",
-    "floorGeneral": "General de Pista",
-    "eliteRebounder": "Reboteador de Élite",
+    "floorgeneral": "General de Pista",
+    "eliterebounder": "Reboteador de Élite",
     "rebounder": "Reboteador",
-    "eliteDefender": "Defensor de Élite",
+    "elitedefender": "Defensor de Élite",
     "defender": "Defensor",
-    "rimProtector": "Protector del Aro",
+    "rimprotector": "Protector del Aro",
     "efficient": "Eficiente",
     "sharpshooter": "Tirador Preciso",
-    "threePointShooter": "Tirador de 3",
+    "threepointshooter": "Tirador de 3",
     "guard": "Base",
     "forward": "Alero",
-    "center": "Pívot"
+    "center": "Pívot",
+    "roleplayer": "Jugador de Rol"
   },
   "infoDialog": {
     "title": "Herramienta de Similitud de Jugadores NBA",
