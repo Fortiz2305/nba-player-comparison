@@ -19,6 +19,7 @@
   },
   "player": {
     "select": "Selecciona un jugador",
+    "label": "Jugador",
     "search": "Buscar un jugador",
     "notFound": "Jugador no encontrado.",
     "noPlayers": "No hay jugadores disponibles",
@@ -31,7 +32,9 @@
     "close": "Cerrar"
   },
   "season": {
-    "seasonsHeading": "Temporadas"
+    "seasonsHeading": "Temporadas",
+    "select": "Selecciona temporada",
+    "label": "Temporada"
   },
   "stats": {
     "ppg": {

@@ -328,140 +328,72 @@ export default function PlayerComparison() {
 
       <div className="flex flex-col items-center justify-center space-y-4 w-full">
         <div className="w-full max-w-md space-y-4">
-          <div className="flex gap-2 sm:gap-4 w-full">
-            <Popover open={seasonOpen} onOpenChange={setSeasonOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={seasonOpen}
-                  className="w-1/3 justify-between bg-white dark:bg-slate-900 border-2 h-12 sm:h-14 text-base sm:text-lg"
-                  onClick={() => setSeasonOpen(!seasonOpen)}
-                  disabled={isLoading || isPlayerLoading || availableSeasons.length === 0}
-                >
-                  {isLoading ? (
-                    <span className="flex items-center">
-                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></span>
-                      {translations('loading.data')}
-                    </span>
-                  ) : (
-                    <span className="truncate">{formatSeasonDisplay(selectedSeason)}</span>
-                  )}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-shrink-0" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
-                <Command>
-                  <CommandList>
-                    <CommandEmpty>{translations('player.notFound')}</CommandEmpty>
-                    <CommandGroup heading={translations('season.seasonsHeading')}>
-                      {availableSeasons.map((season) => (
-                        <CommandItem
-                          key={season}
-                          value={season}
-                          onSelect={(value) => handleSeasonSelect(value)}
-                          className="cursor-pointer py-3"
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4 flex-shrink-0",
-                              selectedSeason === season ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          <span>{formatSeasonDisplay(season)}</span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-
-            {isMobile ? (
-              <>
-                <Button
-                  variant="outline"
-                  className="w-2/3 justify-between bg-white dark:bg-slate-900 border-2 h-12 sm:h-14 text-base sm:text-lg"
-                  onClick={() => setShowMobileDialog(true)}
-                  disabled={isLoading || isPlayerLoading || availablePlayers.length === 0}
-                >
-                  {isLoading ? (
-                    <span className="flex items-center">
-                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></span>
-                      {translations('loading.data')}
-                    </span>
-                  ) : selectedPlayer ? (
-                    <span className="truncate">{selectedPlayer.player}</span>
-                  ) : (
-                    <span className="truncate">{translations('player.select')}</span>
-                  )}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-shrink-0" />
-                </Button>
-
-                <Dialog open={showMobileDialog} onOpenChange={setShowMobileDialog}>
-                  <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-y-auto p-0">
-                    <div className="sticky top-0 z-10 flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-b">
-                      <h2 className="text-xl font-semibold">{translations('player.select')}</h2>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setShowMobileDialog(false)}
-                        className="rounded-full"
-                      >
-                        <X className="h-4 w-4" />
-                        <span className="sr-only">Close</span>
-                      </Button>
-                    </div>
-                    <Command className="rounded-t-none">
-                      <CommandInput placeholder={translations('player.search')} className="h-12" />
-                      <CommandList className="max-h-[60vh] overflow-y-auto">
-                        <CommandEmpty>{translations('player.notFound')}</CommandEmpty>
-                        <CommandGroup heading={translations('player.playersHeading')}>
-                          {availablePlayers && availablePlayers.length > 0 ? (
-                            availablePlayers.map((player) => (
-                              <CommandItem
-                                key={player.player_id || player.player}
-                                value={player.player}
-                                onSelect={(value) => {
-                                  handlePlayerSelect(value);
-                                  setShowMobileDialog(false);
-                                }}
-                                className="cursor-pointer py-3 flex items-center"
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4 flex-shrink-0",
-                                    selectedPlayer?.player === player.player ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                <span className="flex flex-col">
-                                  <span className="font-medium text-base text-foreground">{player.player}</span>
-                                  <span className="text-sm text-muted-foreground">
-                                    {player.team} • {player.position}
-                                  </span>
-                                </span>
-                              </CommandItem>
-                            ))
-                          ) : (
-                            <div className="p-4 text-center text-sm text-slate-500">
-                              {isLoading ? translations('loading.players') : translations('player.noPlayers')}
-                            </div>
-                          )}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </DialogContent>
-                </Dialog>
-              </>
-            ) : (
-              <Popover open={open && !isPlayerLoading} onOpenChange={setOpen}>
+          <div className="flex flex-col md:flex-row gap-4 w-full">
+            <div className="flex flex-col w-full md:w-1/3 gap-1">
+              <label htmlFor="season-select" className="font-medium text-sm ml-1">
+                {translations('season.label')}
+              </label>
+              <Popover open={seasonOpen} onOpenChange={setSeasonOpen}>
                 <PopoverTrigger asChild>
                   <Button
+                    id="season-select"
                     variant="outline"
                     role="combobox"
-                    aria-expanded={open}
-                    className="w-2/3 justify-between bg-white dark:bg-slate-900 border-2 h-12 sm:h-14 text-base sm:text-lg"
-                    onClick={() => setOpen(!open)}
+                    aria-expanded={seasonOpen}
+                    className="w-full justify-between bg-white dark:bg-slate-900 border-2 h-12 sm:h-14 text-base sm:text-lg"
+                    onClick={() => setSeasonOpen(!seasonOpen)}
+                    disabled={isLoading || isPlayerLoading || availableSeasons.length === 0}
+                  >
+                    {isLoading ? (
+                      <span className="flex items-center">
+                        <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></span>
+                        {translations('loading.data')}
+                      </span>
+                    ) : (
+                      <span className="truncate">{formatSeasonDisplay(selectedSeason)}</span>
+                    )}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-shrink-0" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
+                  <Command>
+                    <CommandList>
+                      <CommandEmpty>{translations('player.notFound')}</CommandEmpty>
+                      <CommandGroup heading={translations('season.seasonsHeading')}>
+                        {availableSeasons.map((season) => (
+                          <CommandItem
+                            key={season}
+                            value={season}
+                            onSelect={(value) => handleSeasonSelect(value)}
+                            className="cursor-pointer py-3"
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4 flex-shrink-0",
+                                selectedSeason === season ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            <span>{formatSeasonDisplay(season)}</span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="flex flex-col w-full md:w-2/3 gap-1">
+              <label htmlFor="player-select" className="font-medium text-sm ml-1">
+                {translations('player.label')}
+              </label>
+              {isMobile ? (
+                <>
+                  <Button
+                    id="player-select"
+                    variant="outline"
+                    className="w-full justify-between bg-white dark:bg-slate-900 border-2 h-12 sm:h-14 text-base sm:text-lg"
+                    onClick={() => setShowMobileDialog(true)}
                     disabled={isLoading || isPlayerLoading || availablePlayers.length === 0}
                   >
                     {isLoading ? (
@@ -476,57 +408,138 @@ export default function PlayerComparison() {
                     )}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-shrink-0" />
                   </Button>
-                </PopoverTrigger>
-                <PopoverContent className="player-select-popover w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
-                  <div className="md:hidden sticky top-0 z-10 py-2 px-4 bg-white dark:bg-slate-900 border-b flex items-center justify-between">
-                    <h2 className="text-lg font-medium">{translations('player.select')}</h2>
-                    <Button variant="ghost" size="icon" onClick={() => setOpen(false)} className="rounded-full">
-                      <X className="h-4 w-4" />
-                      <span className="sr-only">Close</span>
-                    </Button>
-                  </div>
-                  <Command>
-                    <CommandInput placeholder={translations('player.search')} className="h-12" />
-                    <CommandList className="md:max-h-[300px] max-h-[60vh]">
-                      <CommandEmpty>{translations('player.notFound')}</CommandEmpty>
-                      <CommandGroup heading={translations('player.playersHeading')}>
-                        {availablePlayers && availablePlayers.length > 0 ? (
-                          availablePlayers.map((player) => {
-                            return (
-                              <CommandItem
-                                key={player.player_id || player.player}
-                                value={player.player}
-                                onSelect={(value) => {
-                                  handlePlayerSelect(value);
-                                }}
-                                className="cursor-pointer py-3 flex items-center"
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4 flex-shrink-0",
-                                    selectedPlayer?.player === player.player ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                <span className="flex flex-col">
-                                  <span className="font-medium text-base text-foreground">{player.player}</span>
-                                  <span className="text-sm text-muted-foreground">
-                                    {player.team} • {player.position}
+
+                  <Dialog open={showMobileDialog} onOpenChange={setShowMobileDialog}>
+                    <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-y-auto p-0">
+                      <div className="sticky top-0 z-10 flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-b">
+                        <h2 className="text-xl font-semibold">{translations('player.select')}</h2>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setShowMobileDialog(false)}
+                          className="rounded-full"
+                        >
+                          <X className="h-4 w-4" />
+                          <span className="sr-only">Close</span>
+                        </Button>
+                      </div>
+                      <Command className="rounded-t-none">
+                        <CommandInput placeholder={translations('player.search')} className="h-12" />
+                        <CommandList className="max-h-[60vh] overflow-y-auto">
+                          <CommandEmpty>{translations('player.notFound')}</CommandEmpty>
+                          <CommandGroup heading={translations('player.playersHeading')}>
+                            {availablePlayers && availablePlayers.length > 0 ? (
+                              availablePlayers.map((player) => (
+                                <CommandItem
+                                  key={player.player_id || player.player}
+                                  value={player.player}
+                                  onSelect={(value) => {
+                                    handlePlayerSelect(value);
+                                    setShowMobileDialog(false);
+                                  }}
+                                  className="cursor-pointer py-3 flex items-center"
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4 flex-shrink-0",
+                                      selectedPlayer?.player === player.player ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  <span className="flex flex-col">
+                                    <span className="font-medium text-base text-foreground">{player.player}</span>
+                                    <span className="text-sm text-muted-foreground">
+                                      {player.team} • {player.position}
+                                    </span>
                                   </span>
-                                </span>
-                              </CommandItem>
-                            );
-                          })
-                        ) : (
-                          <div className="p-4 text-center text-sm text-slate-500">
-                            {isLoading ? translations('loading.players') : translations('player.noPlayers')}
-                          </div>
-                        )}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            )}
+                                </CommandItem>
+                              ))
+                            ) : (
+                              <div className="p-4 text-center text-sm text-slate-500">
+                                {isLoading ? translations('loading.players') : translations('player.noPlayers')}
+                              </div>
+                            )}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </DialogContent>
+                  </Dialog>
+                </>
+              ) : (
+                <Popover open={open && !isPlayerLoading} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="player-select"
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      className="w-full justify-between bg-white dark:bg-slate-900 border-2 h-12 sm:h-14 text-base sm:text-lg"
+                      onClick={() => setOpen(!open)}
+                      disabled={isLoading || isPlayerLoading || availablePlayers.length === 0}
+                    >
+                      {isLoading ? (
+                        <span className="flex items-center">
+                          <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></span>
+                          {translations('loading.data')}
+                        </span>
+                      ) : selectedPlayer ? (
+                        <span className="truncate">{selectedPlayer.player}</span>
+                      ) : (
+                        <span className="truncate">{translations('player.select')}</span>
+                      )}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-shrink-0" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="player-select-popover w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
+                    <div className="md:hidden sticky top-0 z-10 py-2 px-4 bg-white dark:bg-slate-900 border-b flex items-center justify-between">
+                      <h2 className="text-lg font-medium">{translations('player.select')}</h2>
+                      <Button variant="ghost" size="icon" onClick={() => setOpen(false)} className="rounded-full">
+                        <X className="h-4 w-4" />
+                        <span className="sr-only">Close</span>
+                      </Button>
+                    </div>
+                    <Command>
+                      <CommandInput placeholder={translations('player.search')} className="h-12" />
+                      <CommandList className="md:max-h-[300px] max-h-[60vh]">
+                        <CommandEmpty>{translations('player.notFound')}</CommandEmpty>
+                        <CommandGroup heading={translations('player.playersHeading')}>
+                          {availablePlayers && availablePlayers.length > 0 ? (
+                            availablePlayers.map((player) => {
+                              return (
+                                <CommandItem
+                                  key={player.player_id || player.player}
+                                  value={player.player}
+                                  onSelect={(value) => {
+                                    handlePlayerSelect(value);
+                                  }}
+                                  className="cursor-pointer py-3 flex items-center"
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4 flex-shrink-0",
+                                      selectedPlayer?.player === player.player ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  <span className="flex flex-col">
+                                    <span className="font-medium text-base text-foreground">{player.player}</span>
+                                    <span className="text-sm text-muted-foreground">
+                                      {player.team} • {player.position}
+                                    </span>
+                                  </span>
+                                </CommandItem>
+                              );
+                            })
+                          ) : (
+                            <div className="p-4 text-center text-sm text-slate-500">
+                              {isLoading ? translations('loading.players') : translations('player.noPlayers')}
+                            </div>
+                          )}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              )}
+            </div>
           </div>
         </div>
 

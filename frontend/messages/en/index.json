@@ -19,6 +19,7 @@
   },
   "player": {
     "select": "Select a player",
+    "label": "Player",
     "search": "Search for a player",
     "notFound": "No player found.",
     "noPlayers": "No players available",
@@ -31,7 +32,9 @@
     "close": "Close"
   },
   "season": {
-    "seasonsHeading": "Seasons"
+    "seasonsHeading": "Seasons",
+    "select": "Select season",
+    "label": "Season"
   },
   "stats": {
     "ppg": {
