@@ -18,7 +18,7 @@
     "retry": "Retry"
   },
   "player": {
-    "select": "Select an NBA player",
+    "select": "Select a player",
     "search": "Search for a player",
     "notFound": "No player found.",
     "noPlayers": "No players available",
