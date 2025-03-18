@@ -57,14 +57,16 @@ def migrate_data_to_dynamodb(data_dir, table_name):
     table = dynamodb.Table(table_name)
 
     file_repo = FilePlayerRepository(data_dir)
-    df = file_repo.load_players_data()
+    players_data = file_repo.get_all_players()
 
     items_processed = 0
     items_failed = 0
 
-    for _, row in df.iterrows():
+    for player in players_data:
         try:
-            item = row.to_dict()
+            item = player
+            if item['Season'] != '2024_25':
+                continue
 
             for key, value in item.items():
                 if pd.isna(value):
