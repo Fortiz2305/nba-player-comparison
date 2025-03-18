@@ -623,10 +623,27 @@ export default function PlayerComparison() {
                 <div className="h-[300px] sm:h-[400px] mt-6 sm:mt-8">
                   {chartType === "radar" ? (
                     <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart data={getRadarData()}>
-                        <PolarGrid />
-                        <PolarAngleAxis dataKey="category" />
-                        <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                      <RadarChart
+                        data={getRadarData()}
+                        margin={{ top: 20, right: 30, bottom: 20, left: 30 }}
+                        outerRadius={isMobile ? "65%" : "70%"}
+                      >
+                        <PolarGrid gridType="circle" />
+                        <PolarAngleAxis
+                          dataKey="category"
+                          tick={{
+                            fontSize: isMobile ? 12 : 14,
+                            fill: "currentColor"
+                          }}
+                          tickLine={false}
+                        />
+                        <PolarRadiusAxis
+                          angle={30}
+                          domain={[0, 100]}
+                          tick={{ fontSize: isMobile ? 10 : 12 }}
+                          tickCount={5}
+                          axisLine={false}
+                        />
 
                         <Radar
                           name={`${selectedPlayer.player} (${formatSeasonDisplay(selectedPlayer.season)})`}
@@ -634,6 +651,7 @@ export default function PlayerComparison() {
                           stroke={playerColors[0]}
                           fill={playerColors[0]}
                           fillOpacity={0.3}
+                          strokeWidth={2}
                         />
 
                         {similarPlayers.slice(0, 3).map((player, index) => (
@@ -644,28 +662,81 @@ export default function PlayerComparison() {
                             stroke={playerColors[index + 1]}
                             fill={playerColors[index + 1]}
                             fillOpacity={0.3}
+                            strokeWidth={2}
                           />
                         ))}
 
-                        <Legend />
-                        <RechartsTooltip />
+                        <Legend
+                          layout="horizontal"
+                          verticalAlign="bottom"
+                          align="center"
+                          wrapperStyle={{
+                            fontSize: isMobile ? 10 : 12,
+                            paddingTop: 20
+                          }}
+                        />
+                        <RechartsTooltip contentStyle={{ fontSize: isMobile ? 10 : 12 }} />
                       </RadarChart>
                     </ResponsiveContainer>
                   ) : (
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
                         data={getDetailedStats(selectedPlayer)}
-                        margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
+                        margin={isMobile ? { top: 5, right: 5, left: 5, bottom: 65 } : { top: 20, right: 20, left: 0, bottom: 5 }}
+                        layout="horizontal"
+                        barSize={isMobile ? 12 : 20}
+                        barGap={isMobile ? 2 : 5}
+                        barCategoryGap={isMobile ? 5 : 10}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="stat" />
-                        <YAxis />
-                        <RechartsTooltip />
-                        <Legend />
+                        <XAxis
+                          dataKey="stat"
+                          tick={{ fontSize: isMobile ? 10 : 12 }}
+                          tickLine={!isMobile}
+                          height={isMobile ? 20 : 30}
+                        />
+                        <YAxis
+                          tick={{ fontSize: isMobile ? 10 : 12 }}
+                          tickLine={!isMobile}
+                          width={isMobile ? 25 : 40}
+                          domain={[0, 'auto']}
+                        />
+                        <RechartsTooltip
+                          contentStyle={{ fontSize: isMobile ? 10 : 12 }}
+                          formatter={(value, name) => {
+                            const nameStr = String(name);
+                            return [`${Number(value).toFixed(1)}`, nameStr.includes(' (') ? nameStr.split(' (')[0] : nameStr];
+                          }}
+                          labelFormatter={(label) => {
+                            const stat = getDetailedStats(selectedPlayer).find(s => s.stat === label);
+                            return stat ? stat.fullName : String(label);
+                          }}
+                        />
+                        <Legend
+                          layout="horizontal"
+                          verticalAlign="bottom"
+                          align="center"
+                          wrapperStyle={{
+                            fontSize: isMobile ? 8 : 12,
+                            paddingTop: 5,
+                            bottom: 0,
+                            lineHeight: "1.2em"
+                          }}
+                          iconSize={isMobile ? 8 : 14}
+                          formatter={(value) => {
+                            // Truncate player names on mobile
+                            if (isMobile && typeof value === 'string') {
+                              const name = value.split(' (')[0];
+                              return name.length > 10 ? name.substring(0, 10) + '...' : name;
+                            }
+                            return value;
+                          }}
+                        />
                         <Bar
                           dataKey="value"
                           name={`${selectedPlayer.player} (${formatSeasonDisplay(selectedPlayer.season)})`}
                           fill={playerColors[0]}
+                          radius={[2, 2, 0, 0]}
                         />
                         {similarPlayers.slice(0, 3).map((player, index) => (
                           <Bar
@@ -673,6 +744,7 @@ export default function PlayerComparison() {
                             dataKey="value"
                             name={`${player.player} (${formatSeasonDisplay(player.season)})`}
                             fill={playerColors[index + 1]}
+                            radius={[2, 2, 0, 0]}
                           />
                         ))}
                       </BarChart>
@@ -722,19 +794,27 @@ export default function PlayerComparison() {
                 {selectedPlayerForDetails &&
                   getDetailedStats(selectedPlayerForDetails.stats).map((stat, index) => (
                     <div key={index} className="bg-slate-100 dark:bg-slate-800 p-2 rounded-md text-center">
-                      <TooltipProvider>
-                        <Tooltip delayDuration={300}>
-                          <TooltipTrigger asChild>
-                            <div className="text-sm text-slate-500 cursor-help flex items-center justify-center gap-1">
-                              {stat.stat}
-                              <HelpCircle size={12} />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{stat.fullName}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <div className="text-sm text-slate-500 mb-1">
+                        {stat.stat}
+                        {isMobile ? (
+                          <div className="text-xs opacity-70 mt-0.5">
+                            {stat.fullName}
+                          </div>
+                        ) : (
+                          <TooltipProvider>
+                            <Tooltip delayDuration={300}>
+                              <TooltipTrigger asChild>
+                                <span className="cursor-help inline-flex items-center ml-1">
+                                  <HelpCircle size={12} />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{stat.fullName}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                      </div>
                       <div className="font-bold text-sm sm:text-base">{stat.value.toFixed(2)}</div>
                     </div>
                   ))}
