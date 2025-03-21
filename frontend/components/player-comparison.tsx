@@ -42,7 +42,7 @@ interface DetailedStat {
   fullName: string
 }
 
-export default function PlayerComparison() {
+export function PlayerComparison() {
   const translations = useTranslations();
   const [open, setOpen] = useState(false)
   const [seasonOpen, setSeasonOpen] = useState(false)

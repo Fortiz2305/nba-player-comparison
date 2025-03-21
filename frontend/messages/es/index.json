@@ -1,7 +1,13 @@
 {
   "app": {
-    "title": "Similitud de Jugadores NBA",
-    "description": "Encuentra los jugadores más similares de la liga basados en estadísticas y estilo de juego"
+    "title": "Comparación de Jugadores NBA",
+    "description": "Encuentra los jugadores más similares en la liga basados en estadísticas y estilo de juego. Compara puntos, rebotes, asistencias, porcentajes y más.",
+    "schemaTitle": "Comparación de Jugadores NBA",
+    "schemaDescription": "Herramienta gratuita para comparar estadísticas y estilos de juego de jugadores de la NBA. Encuentra jugadores similares basados en puntos, rebotes, asistencias y más.",
+    "keywords": "comparación NBA, estadísticas baloncesto, comparar jugadores baloncesto, análisis NBA, similitud jugadores, estadísticas NBA, comparativa jugadores",
+    "toolSelection": "Elige una herramienta para explorar los datos de los jugadores de la NBA.",
+    "copyright": "© NBA Player Comparison - Herramienta de comparación de estadísticas de la NBA",
+    "statsInfo": "Estadísticas actualizadas para todas las temporadas de la NBA. Compara jugadores por puntos, asistencias, rebotes y estilo de juego."
   },
   "loading": {
     "data": "Cargando datos...",
@@ -35,6 +41,18 @@
     "seasonsHeading": "Temporadas",
     "select": "Selecciona temporada",
     "label": "Temporada"
+  },
+  "clustering": {
+    "numClusters": "Número de Grupos (K)",
+    "visualization": "Visualización de Grupos de Jugadores",
+    "visualizationDescription": "Jugadores agrupados por similitud estadística usando clustering K-means",
+    "visualizationPlaceholder": "La visualización de grupos aparecería aquí",
+    "details": "Detalles de Grupo",
+    "detailsDescription": "Haz clic en un grupo para ver detalles",
+    "eliteScorers": "Anotadores de Élite",
+    "defensiveSpecialists": "Especialistas Defensivos",
+    "allAroundPlayers": "Jugadores Completos",
+    "players": "jugadores"
   },
   "stats": {
     "ppg": {

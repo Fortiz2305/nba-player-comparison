@@ -1,7 +1,13 @@
 {
   "app": {
-    "title": "NBA Player Similarity",
-    "description": "Find the most similar players in the league based on stats and playing style"
+    "title": "NBA Player Comparison",
+    "description": "Find the most similar players in the league based on stats and playing style. Compare points, rebounds, assists, percentages and more.",
+    "schemaTitle": "NBA Player Comparison Tool",
+    "schemaDescription": "Free tool to compare NBA players stats and playing styles. Find similar players based on points, rebounds, assists and more.",
+    "keywords": "NBA comparison, basketball stats, compare basketball players, NBA analytics, player similarity, NBA statistics, player comparisons",
+    "toolSelection": "Choose a tool below to start exploring NBA player data.",
+    "copyright": "© NBA Player Comparison - NBA Stats Comparison Tool",
+    "statsInfo": "Up-to-date statistics for all NBA seasons. Compare players by points, assists, rebounds and playing style."
   },
   "loading": {
     "data": "Loading data...",
@@ -35,6 +41,18 @@
     "seasonsHeading": "Seasons",
     "select": "Select season",
     "label": "Season"
+  },
+  "clustering": {
+    "numClusters": "Number of Clusters (K)",
+    "visualization": "Player Clusters Visualization",
+    "visualizationDescription": "Players grouped by statistical similarity using K-means clustering",
+    "visualizationPlaceholder": "Cluster visualization would appear here",
+    "details": "Cluster Details",
+    "detailsDescription": "Click on a cluster to see details",
+    "eliteScorers": "Elite Scorers",
+    "defensiveSpecialists": "Defensive Specialists",
+    "allAroundPlayers": "All-Around Players",
+    "players": "players"
   },
   "stats": {
     "ppg": {
