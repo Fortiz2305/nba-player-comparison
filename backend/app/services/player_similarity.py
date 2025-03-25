@@ -1,137 +1,13 @@
+from ..models.dataset import Player, PlayerDataset
 import numpy as np
-from typing import List, Dict, Any, Tuple, Optional
+from typing import List, Dict, Any, Tuple
 from ..models.player import PlayerStats, SimilarPlayer
-
-
-class Player:
-    def __init__(self, data: Dict[str, Any]):
-        self.data = data
-        self.normalized_stats = {}
-
-    def __getitem__(self, key: str) -> Any:
-        return self.data.get(key)
-
-
-class PlayerDataset:
-    def __init__(self, players: List[Dict[str, Any]]):
-        self.players = [Player(player) for player in players]
-        self.seasons = set(player["Season"] for player in self.players)
-        self.normalized = False
-
-        print(f"PlayerDataset initialized with {len(self.players)} players and {len(self.seasons)} seasons")
-        if self.seasons:
-            print(f"Seasons in dataset: {sorted(list(self.seasons))}")
-
-    def normalize_data(self) -> None:
-        if not self.players:
-            print("No players to normalize")
-            return
-
-        cols_to_norm = [
-            'PTS', 'MP', 'FG', 'FGA', 'FG3', 'FG3A', 'FG2', 'FG2A',
-            'FT', 'FTA', 'ORB', 'DRB', 'AST', 'STL', 'TOV', 'BLK'
-        ]
-
-        for season in self.seasons:
-            season_players = [p for p in self.players if p["Season"] == season]
-            for col in cols_to_norm:
-                values = []
-                for p in season_players:
-                    val = p[col]
-                    if val is not None:
-                        try:
-                            if isinstance(val, str) and not val.strip():
-                                values.append(0.0)
-                            else:
-                                values.append(float(val))
-                        except (ValueError, TypeError):
-                            print(f"Warning: Could not convert value '{val}' for column {col} to float. Using 0.0 instead.")
-                            values.append(0.0)
-                    else:
-                        values.append(0.0)
-
-                min_val = min(values) if values else 0
-                max_val = max(values) if values else 0
-
-                if max_val > min_val:
-                    for i, player in enumerate(season_players):
-                        player.normalized_stats[f"{col}_norm"] = (values[i] - min_val) / (max_val - min_val)
-                else:
-                    for player in season_players:
-                        player.normalized_stats[f"{col}_norm"] = 0.0
-
-        self.normalized = True
-        print("Normalization complete")
-
-    def get_player(self, player_name: str, season: str) -> Optional[Player]:
-        for player in self.players:
-            if player["Player"] == player_name and player["Season"] == season:
-                return player
-
-        for player in self.players:
-            if player["Player"].lower() == player_name.lower() and player["Season"] == season:
-                return player
-
-        return None
-
-    def get_players_by_season(self, season: str) -> List[Player]:
-        return [p for p in self.players if p["Season"] == season]
-
-    def get_seasons_list(self) -> List[str]:
-        return sorted(list(self.seasons), reverse=True)
-
 
 class PlayerSimilarityService:
     def __init__(self, player_repository):
         self.player_repository = player_repository
         self.dataset = None
         self._data_loaded = False
-
-    def load_data(self) -> None:
-        if not self._data_loaded:
-            try:
-                print("Loading player data from repository")
-                raw_data = self.player_repository.get_all_players()
-                print(f"Loaded {len(raw_data)} players from repository")
-
-                if not raw_data:
-                    print("Warning: No player data returned from repository")
-                    self.dataset = PlayerDataset([])
-                else:
-                    self.dataset = PlayerDataset(raw_data)
-                    self.dataset.normalize_data()
-
-                self._data_loaded = True
-            except Exception as e:
-                print(f"Error loading player data: {str(e)}")
-                # Initialize with empty dataset to prevent further errors
-                self.dataset = PlayerDataset([])
-                self._data_loaded = True
-                raise
-
-    def _calculate_distance(self, player_vector: np.ndarray, compared_player_vector: np.ndarray) -> float:
-        return np.sqrt(np.sum((player_vector - compared_player_vector) ** 2))
-
-    def _get_player_stats_vector(self, player: Player) -> np.ndarray:
-        norm_cols = [
-            'PTS_norm', 'MP_norm', 'FG_norm', 'FGA_norm', 'FG3_norm', 'FG3A_norm',
-            'FG2_norm', 'FG2A_norm', 'FT_norm', 'FTA_norm', 'ORB_norm', 'DRB_norm',
-            'AST_norm', 'STL_norm', 'TOV_norm', 'BLK_norm'
-        ]
-
-        vector = []
-        for col in norm_cols:
-            try:
-                val = player.normalized_stats.get(col, 0.0)
-                if isinstance(val, str) and not val.strip():
-                    vector.append(0.0)
-                else:
-                    vector.append(float(val))
-            except (ValueError, TypeError) as e:
-                print(f"Warning: Could not convert normalized stat '{col}' to float: {e}. Using 0.0 instead.")
-                vector.append(0.0)
-
-        return np.array(vector)
 
     def find_similar_players(self, player_name: str, season: str = "2023_24",
                             num_similar: int = 5) -> Tuple[PlayerStats, List[SimilarPlayer]]:
@@ -236,10 +112,67 @@ class PlayerSimilarityService:
             print(f"Error calculating similar players: {str(e)}")
             raise
 
+    def load_data(self) -> None:
+        if not self._data_loaded:
+            try:
+                print("Loading player data from repository")
+                raw_data = self.player_repository.get_all_players()
+                print(f"Loaded {len(raw_data)} players from repository")
+
+                if not raw_data:
+                    print("Warning: No player data returned from repository")
+                    self.dataset = PlayerDataset([])
+                else:
+                    self.dataset = PlayerDataset(raw_data)
+                    self.dataset.normalize_data()
+
+                self._data_loaded = True
+            except Exception as e:
+                print(f"Error loading player data: {str(e)}")
+                self.dataset = PlayerDataset([])
+                self._data_loaded = True
+                raise
+
+    def get_all_players(self, season: str = None) -> List[Dict[str, Any]]:
+        return self.player_repository.get_all_players(season)
+
+    def get_seasons(self) -> List[str]:
+        try:
+            seasons = self.player_repository.get_seasons()
+            print(f"Retrieved seasons: {seasons}")
+            return seasons
+        except Exception as e:
+            print(f"Error retrieving seasons: {str(e)}")
+            raise
+
+    def _calculate_distance(self, player_vector: np.ndarray, compared_player_vector: np.ndarray) -> float:
+        return np.sqrt(np.sum((player_vector - compared_player_vector) ** 2))
+
+    def _get_player_stats_vector(self, player: Player) -> np.ndarray:
+        norm_cols = [
+            'PTS_norm', 'MP_norm', 'FG_norm', 'FGA_norm', 'FG3_norm', 'FG3A_norm',
+            'FG2_norm', 'FG2A_norm', 'FT_norm', 'FTA_norm', 'ORB_norm', 'DRB_norm',
+            'AST_norm', 'STL_norm', 'TOV_norm', 'BLK_norm'
+        ]
+
+        vector = []
+        for col in norm_cols:
+            try:
+                val = player.normalized_stats.get(col, 0.0)
+                if isinstance(val, str) and not val.strip():
+                    vector.append(0.0)
+                else:
+                    vector.append(float(val))
+            except (ValueError, TypeError) as e:
+                print(f"Warning: Could not convert normalized stat '{col}' to float: {e}. Using 0.0 instead.")
+                vector.append(0.0)
+
+        return np.array(vector)
+
+
     def _player_to_stats(self, player: Player) -> PlayerStats:
         data = player.data
 
-        # Helper function to safely convert values
         def safe_convert(value, convert_func, default=0):
             if value is None:
                 return default
@@ -283,19 +216,3 @@ class PlayerSimilarityService:
             personal_fouls_per_game=safe_convert(data.get('PF'), float),
             player_id=data.get('Player-additional', '')
         )
-
-    def get_all_players(self, season: str = None) -> List[Dict[str, Any]]:
-        # Ensure consistent season format if provided
-        if season and '_' not in season and len(season) == 6:
-            season = f"{season[:4]}_{season[4:]}"
-
-        return self.player_repository.get_all_players(season)
-
-    def get_seasons(self) -> List[str]:
-        try:
-            seasons = self.player_repository.get_seasons()
-            print(f"Retrieved seasons: {seasons}")
-            return seasons
-        except Exception as e:
-            print(f"Error retrieving seasons: {str(e)}")
-            raise

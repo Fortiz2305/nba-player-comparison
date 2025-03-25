@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from typing import List, Dict, Any
 from ..services.player_similarity import PlayerSimilarityService
+from ..services.clustering import ClusteringService
 from ..models.player import PlayerQuery, SimilarPlayersResponse
+from ..models.cluster import ClusteringResult, PlayerCluster
 from ..repositories.file_player_repository import FilePlayerRepository
 from ..repositories.dynamodb_player_repository import DynamoDBPlayerRepository
 import os
@@ -30,6 +32,9 @@ def get_player_repository():
 
 def get_player_similarity_service(repository=Depends(get_player_repository)):
     return PlayerSimilarityService(player_repository=repository)
+
+def get_clustering_service(repository=Depends(get_player_repository)):
+    return ClusteringService(player_repository=repository)
 
 async def get_players(
     season: str = Query(None, description="Filter players by season (e.g., '2023_24')"),
@@ -120,3 +125,57 @@ async def find_similar_players_get(
 router.get("/similar", response_model=SimilarPlayersResponse)(find_similar_players_get)
 router.get("/similar/", response_model=SimilarPlayersResponse)(find_similar_players_get)
 router.get("similar", response_model=SimilarPlayersResponse)(find_similar_players_get)
+
+async def get_player_clusters(
+    season: str = Query("2023_24", description="Season to cluster players from (e.g., '2023_24')"),
+    num_clusters: int = Query(8, description="Number of clusters to create", ge=2, le=20),
+    service: ClusteringService = Depends(get_clustering_service)
+):
+    try:
+        logger.info(f"Clustering players for season {season} into {num_clusters} clusters")
+        clustering_result = service.get_clustering(
+            season=season,
+            num_clusters=num_clusters
+        )
+
+        logger.info(f"Created {len(clustering_result.clusters)} clusters for season {season}")
+        return clustering_result
+    except ValueError as e:
+        logger.error(f"Error in clustering: {str(e)}")
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error in get_player_clusters: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+router.get("/clusters", response_model=ClusteringResult)(get_player_clusters)
+router.get("/clusters/", response_model=ClusteringResult)(get_player_clusters)
+router.get("clusters", response_model=ClusteringResult)(get_player_clusters)
+
+async def get_specific_cluster(
+    cluster_id: int = Path(..., description="The ID of the cluster to retrieve", ge=0),
+    season: str = Query("2023_24", description="Season to cluster players from (e.g., '2023_24')"),
+    num_clusters: int = Query(8, description="Number of clusters to create", ge=2, le=20),
+    service: ClusteringService = Depends(get_clustering_service)
+):
+    try:
+        logger.info(f"Getting cluster {cluster_id} for season {season}")
+        clustering_result = service.get_clustering(
+            season=season,
+            num_clusters=num_clusters
+        )
+
+        for cluster in clustering_result.clusters:
+            if cluster.cluster_id == cluster_id:
+                logger.info(f"Found cluster {cluster_id} with {len(cluster.players)} players")
+                return cluster
+
+        logger.error(f"Cluster with ID {cluster_id} not found")
+        raise HTTPException(status_code=404, detail=f"Cluster with ID {cluster_id} not found")
+    except ValueError as e:
+        logger.error(f"Error in clustering: {str(e)}")
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error in get_specific_cluster: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+router.get("/clusters/{cluster_id}", response_model=PlayerCluster)(get_specific_cluster)

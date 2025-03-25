@@ -30,6 +30,7 @@ async def root():
         "endpoints": {
             "players": "/players",
             "seasons": "/players/seasons",
-            "similar_players": "/players/similar"
+            "similar_players": "/players/similar",
+            "player_clusters": "/players/clusters"
         }
     }
