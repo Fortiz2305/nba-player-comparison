@@ -1,7 +1,5 @@
 "use client";
 
-import { MICHIGAN_GOLD } from "../data";
-
 export function Hero() {
   return (
     <section className="relative overflow-hidden px-4 pb-20 pt-16 sm:pb-28 sm:pt-24">
@@ -10,18 +8,6 @@ export function Hero() {
       <div className="absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#FFCB05]/40 to-transparent" />
 
       <div className="relative mx-auto max-w-4xl text-center">
-        <div
-          className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
-          style={{
-            color: MICHIGAN_GOLD,
-            borderColor: "rgba(255,203,5,0.25)",
-            backgroundColor: "rgba(255,203,5,0.05)",
-          }}
-        >
-          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[#FFCB05]" />
-          Michigan · Big Ten · 2.21m · Draft 2026
-        </div>
-
         <h1 className="text-balance text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
           ¿A quién se parecerá{" "}
           <span
