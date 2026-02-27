@@ -4,7 +4,7 @@ import Logo from '@/components/logo';
 import { useParams } from 'next/navigation';
 import { InfoDialog } from '../../components/info-dialog';
 import { useEffect } from 'react';
-import { FeatureCards } from '../../components/feature-cards';
+import { PlayerComparison } from '../../components/player-comparison';
 import { useTranslations } from 'next-intl';
 
 export default function Home() {
@@ -43,7 +43,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <div className="container mx-auto px-4 py-8">
-        <header className="mb-8 text-center">
+        <header className="mb-12 text-center">
           <div className="flex flex-col items-center justify-center gap-4">
             <Logo />
             <div>
@@ -53,15 +53,12 @@ export default function Home() {
               <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
                 {translations('app.description')}
               </p>
-              <div className="mt-3 text-sm text-slate-500 dark:text-slate-400 hidden sm:block">
-                <p className="max-w-2xl mx-auto">
-                  {translations('app.toolSelection')}
-                </p>
-              </div>
             </div>
           </div>
         </header>
-        <FeatureCards />
+
+        <PlayerComparison />
+
         <footer className="mt-16 text-center text-sm text-slate-500 dark:text-slate-400">
           <p className="mb-2">
             {translations('app.copyright')}
