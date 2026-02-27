@@ -1,4 +1,5 @@
 import { PlayerStats, SimilarPlayersResponse } from '@/types/player';
+import { ClusteringResult } from '@/types/cluster';
 
 // Define an interface for the raw player data from the API
 interface RawPlayerData {
@@ -307,4 +308,28 @@ function calculateBasketballIQRating(player: PlayerStats): number {
   const foulScore = Math.max(100 - (foulsPerMinute * 100 * 36), 0);
 
   return Math.round((astToScore * 0.4) + (fgPctScore * 0.3) + (ftPctScore * 0.2) + (foulScore * 0.1));
+}
+
+export async function getPlayerClusters(
+  season: string = '2023_24',
+  numClusters: number = 4
+): Promise<ClusteringResult> {
+  const url = new URL(`${API_BASE_URL}/players/clusters`);
+  url.searchParams.append('season', season);
+  url.searchParams.append('num_clusters', numClusters.toString());
+
+  try {
+    const response = await fetch(url.toString());
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API error (${response.status}): ${errorText}`);
+      throw new Error(`Failed to fetch player clusters: ${response.statusText}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Error in getPlayerClusters:', error);
+    throw error;
+  }
 }
