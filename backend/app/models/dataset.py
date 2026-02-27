@@ -10,9 +10,13 @@ class Player:
 
 class PlayerDataset:
     def __init__(self, players: List[Dict[str, Any]]):
-        self.players = [Player(player) for player in players]
+        valid_players = [p for p in players if p.get("Player") and str(p.get("Player")).strip()]
+        self.players = [Player(player) for player in valid_players]
         self.seasons = set(player["Season"] for player in self.players)
         self.normalized = False
+
+        if len(valid_players) < len(players):
+            print(f"Filtered out {len(players) - len(valid_players)} players with empty/None names")
 
         print(f"PlayerDataset initialized with {len(self.players)} players and {len(self.seasons)} seasons")
         if self.seasons:
@@ -65,7 +69,8 @@ class PlayerDataset:
                 return player
 
         for player in self.players:
-            if player["Player"].lower() == player_name.lower() and player["Season"] == season:
+            player_field = player["Player"]
+            if player_field and player_field.lower() == player_name.lower() and player["Season"] == season:
                 return player
 
         return None
