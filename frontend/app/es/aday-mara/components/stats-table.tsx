@@ -37,7 +37,57 @@ export function StatsTable() {
         </AnimateOnScroll>
 
         <AnimateOnScroll delay={200}>
-          <div className="overflow-x-auto rounded-xl border border-zinc-800">
+          <div className="block sm:hidden space-y-4">
+            {displayedPlayers.map((player, index) => {
+              const isAday = index === 0;
+              return (
+                <div
+                  key={player.name}
+                  className={`rounded-xl border ${
+                    isAday
+                      ? "border-[#FFCB05]/30 bg-zinc-900/80"
+                      : "border-zinc-800 bg-zinc-900/40"
+                  } p-4`}
+                >
+                  <div className="mb-3 pb-3 border-b border-zinc-800">
+                    <h3
+                      className="text-lg font-semibold"
+                      style={{ color: isAday ? MICHIGAN_GOLD : "#e4e4e7" }}
+                    >
+                      {player.name}
+                    </h3>
+                    <p className="text-sm text-zinc-500">{player.university}</p>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    {statColumns.map((col) => {
+                      const value = player[col.key] as number;
+                      const isMax = value === getMaxForStat(displayedPlayers, col.key);
+                      return (
+                        <div key={col.key} className="text-center">
+                          <p className="text-xs text-zinc-500 mb-1">{col.label}</p>
+                          <p
+                            className={`font-mono text-sm ${
+                              isMax ? "font-bold text-white" : "text-zinc-400"
+                            }`}
+                          >
+                            {isMax && (
+                              <span
+                                className="mr-1 inline-block h-1 w-1 rounded-full"
+                                style={{ backgroundColor: MICHIGAN_GOLD }}
+                              />
+                            )}
+                            {value}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="hidden sm:block overflow-x-auto rounded-xl border border-zinc-800">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-zinc-800 bg-zinc-900/80">

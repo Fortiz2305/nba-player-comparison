@@ -17,7 +17,7 @@ function PlayerCard({
   rank: number;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/80 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900">
+    <div className="group relative h-full overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/80 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900">
       <div className="flex items-start justify-between">
         <span
           className="text-4xl font-black"
@@ -60,7 +60,7 @@ export function SimilarPlayers() {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <section className="px-4 py-16 sm:py-20">
+    <section id="similar-players" className="px-4 py-16 sm:py-20">
       <div className="mx-auto max-w-5xl">
         <AnimateOnScroll>
           <h2 className="mb-2 text-center text-3xl font-bold text-white sm:text-4xl">

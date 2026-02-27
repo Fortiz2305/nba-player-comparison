@@ -110,12 +110,12 @@ export function RadarComparison() {
                     key={player.name}
                     onClick={() => togglePlayer(player.name)}
                     disabled={isFull}
-                    className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
+                    className={`flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-semibold transition-all ${
                       isActive
-                        ? "border-zinc-600 bg-zinc-800"
+                        ? "border-zinc-600 bg-zinc-800 cursor-pointer"
                         : isFull
                           ? "cursor-not-allowed border-zinc-800/50 bg-zinc-900/20 opacity-20"
-                          : "border-zinc-800 bg-zinc-900/40 opacity-50 hover:opacity-80"
+                          : "border-zinc-800 bg-zinc-900/40 opacity-50 hover:opacity-80 cursor-pointer"
                     }`}
                     style={{ color }}
                   >
@@ -177,9 +177,15 @@ export function RadarComparison() {
               </RadarChart>
             </ResponsiveContainer>
 
-            <p className="mt-4 text-center text-sm text-zinc-400">
-              Pulsa en un jugador para añadir o quitar su comparación
-            </p>
+            <div className="mt-4 flex items-center justify-center gap-4 text-center text-sm text-zinc-400">
+              <p>Pulsa en un jugador para añadir o quitar su comparación</p>
+              <button
+                onClick={() => setSelected(DEFAULT_SELECTED)}
+                className="text-xs text-zinc-500 hover:text-zinc-300 underline underline-offset-2"
+              >
+                Resetear a top 3
+              </button>
+            </div>
           </div>
         </AnimateOnScroll>
       </div>

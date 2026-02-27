@@ -9,10 +9,10 @@ export default function AdayMaraPage() {
   return (
     <main className="dark min-h-screen bg-zinc-950 font-[family-name:var(--font-geist-sans)] text-white">
       <Hero />
-      <HowItWorks />
       <SimilarPlayers />
       <RadarComparison />
       <StatsTable />
+      <HowItWorks />
       <Methodology />
     </main>
   );
