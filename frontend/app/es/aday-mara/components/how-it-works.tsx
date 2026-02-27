@@ -27,8 +27,20 @@ const steps = [
   {
     number: "03",
     title: "Cálculo de similitud",
-    description:
-      "Se utiliza K-Nearest Neighbors: cada jugador es un punto en un espacio de 17 dimensiones (una por stat). Los más cercanos a Aday Mara son los más similares. Es el mismo tipo de algoritmo que usa Spotify para recomendarte canciones.",
+    description: (
+      <>
+        Se utiliza el algoritmo{" "}
+        <a
+          href="https://es.wikipedia.org/wiki/K_vecinos_m%C3%A1s_pr%C3%B3ximos"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#FFCB05] hover:text-[#FFE085] underline underline-offset-2 transition-colors"
+        >
+          K-Nearest Neighbors
+        </a>
+        , que encuentra jugadores similares comparando estadísticas. Cada jugador es un punto en un espacio de 17 dimensiones (una por stat). Los más cercanos a Aday Mara son los más parecidos. Es el mismo tipo de algoritmo que usa Spotify para recomendarte canciones.
+      </>
+    ),
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />

@@ -33,7 +33,7 @@ export function Hero() {
         </h1>
 
         <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-zinc-400">
-          Comparamos sus estadísticas universitarias con las de{" "}
+          Comparación de estadísticas universitarias de Aday Mara con las de{" "}
           <span className="font-semibold text-zinc-200">todos los jugadores drafteados</span>{" "}
           desde 2005 que pasaron por la universidad americana
         </p>
