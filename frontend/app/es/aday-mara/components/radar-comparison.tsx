@@ -79,7 +79,7 @@ export function RadarComparison() {
       <div className="mx-auto max-w-4xl">
         <AnimateOnScroll>
           <h2 className="mb-2 text-center text-3xl font-bold text-white sm:text-4xl">
-            Comparación por dimensiones
+            Compáralos
           </h2>
           <p className="mb-10 text-center text-zinc-400">
             Aday Mara vs jugadores NBA en NCAA — elige hasta 4

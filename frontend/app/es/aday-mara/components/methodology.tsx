@@ -16,7 +16,7 @@ export function Methodology() {
               Basketball Reference
             </a>
             <p className="mt-2 text-xs text-zinc-500">
-              1.200+ jugadores NCAA drafteados entre 2005-2025
+              Todos los jugadores drafteados desde 2005 que pasaron por NCAA
             </p>
           </div>
 
