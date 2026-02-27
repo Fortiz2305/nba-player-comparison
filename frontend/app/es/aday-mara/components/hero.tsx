@@ -1,14 +1,6 @@
 "use client";
 
-import { adayMara, MICHIGAN_GOLD } from "../data";
-import { AnimatedNumber } from "./animated-number";
-
-const highlightStats = [
-  { label: "PTS", value: adayMara.points, suffix: "" },
-  { label: "REB", value: adayMara.rebounds, suffix: "" },
-  { label: "BLK", value: adayMara.blocks, suffix: "" },
-  { label: "FG%", value: adayMara.fieldGoalPct, suffix: "%" },
-];
+import { MICHIGAN_GOLD } from "../data";
 
 export function Hero() {
   return (
@@ -45,23 +37,6 @@ export function Hero() {
           <span className="font-semibold text-zinc-200">1.200 jugadores drafteados</span>{" "}
           en los últimos 20 años cuando estaban en NCAA
         </p>
-
-        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {highlightStats.map((stat) => (
-            <div
-              key={stat.label}
-              className="group relative rounded-xl border border-zinc-800 bg-zinc-900/60 px-4 py-6 backdrop-blur-sm transition-colors hover:border-[#FFCB05]/30"
-            >
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-[#FFCB05]/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-              <p className="relative text-3xl font-bold sm:text-4xl" style={{ color: MICHIGAN_GOLD }}>
-                <AnimatedNumber value={stat.value} suffix={stat.suffix} />
-              </p>
-              <p className="relative mt-1 text-sm font-medium text-zinc-400">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
 
         <button
           onClick={() => document.getElementById('similar-players')?.scrollIntoView({ behavior: 'smooth' })}
