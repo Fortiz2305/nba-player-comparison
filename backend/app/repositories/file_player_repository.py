@@ -99,9 +99,10 @@ class FilePlayerRepository(PlayerRepository):
                                 # Keep as string if conversion fails
                                 pass
                         elif isinstance(value, str) and not value.strip():
-                            # Replace empty strings with appropriate defaults
                             if key in ['G', 'GS', 'Age']:
                                 player_data[key] = 0
+                            elif key in ['Player', 'Pos', 'Team', 'Player-additional', 'Awards']:
+                                player_data[key] = ''
                             else:
                                 player_data[key] = 0.0
 
