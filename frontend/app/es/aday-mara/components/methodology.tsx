@@ -28,7 +28,7 @@ export function Methodology() {
               K-Nearest Neighbors sobre 17 estadísticas per-game normalizadas
             </p>
             <a
-              href="https://github.com/fortiz2305"
+              href="https://github.com/Fortiz2305/nba-player-comparison"
               className="mt-2 inline-block text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
               target="_blank"
               rel="noopener noreferrer"
