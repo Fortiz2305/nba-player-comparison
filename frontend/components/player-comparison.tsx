@@ -59,7 +59,7 @@ export function PlayerComparison() {
   const [chartType, setChartType] = useState("radar")
   const [selectedPlayerForDetails, setSelectedPlayerForDetails] = useState<SimilarPlayer | null>(null)
   const [showDetailsDialog, setShowDetailsDialog] = useState(false)
-  const [selectedSeason, setSelectedSeason] = useState<string>("2024_25")
+  const [selectedSeason, setSelectedSeason] = useState<string>("2025_26")
   const [isMobile, setIsMobile] = useState(false)
   const [showMobileDialog, setShowMobileDialog] = useState(false)
 
@@ -333,11 +333,11 @@ export function PlayerComparison() {
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-amber-50 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950/20 pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(30,64,175,0.08),transparent_50%)] pointer-events-none" />
 
-      <div className="relative px-4 sm:px-6 lg:px-8 py-8 max-w-[1400px] mx-auto">
-        <div className="mb-10 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 text-sm font-semibold mb-4">
-            <BarChart3 className="h-4 w-4" />
-            NBA Analytics Platform
+      <div className="relative px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 max-w-[1400px] mx-auto">
+        <div className="mb-8 sm:mb-10 text-center">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 text-xs sm:text-sm font-semibold mb-4">
+            <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="whitespace-nowrap">NBA Analytics Platform</span>
           </div>
         </div>
 
@@ -537,32 +537,32 @@ export function PlayerComparison() {
           <>
             <Card className="backdrop-blur-xl bg-gradient-to-br from-white/95 to-blue-50/95 dark:from-slate-900/95 dark:to-blue-950/50 border-0 shadow-2xl mb-6">
               <CardHeader className="p-6 sm:p-8 border-b border-blue-100 dark:border-blue-900/30">
-                <div className="flex flex-col sm:flex-row justify-between items-start gap-6">
+                <div className="flex flex-col gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <CardTitle className="text-3xl sm:text-4xl font-black text-blue-900 dark:text-blue-100">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                      <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-black text-blue-900 dark:text-blue-100 break-words">
                         {selectedPlayer.player}
                       </CardTitle>
-                      <Badge className="bg-blue-600 hover:bg-blue-700 px-3 py-1 text-sm font-bold">
+                      <Badge className="bg-blue-600 hover:bg-blue-700 px-3 py-1 text-sm font-bold w-fit">
                         {selectedPlayer.position}
                       </Badge>
                     </div>
-                    <CardDescription className="text-lg font-semibold text-slate-600 dark:text-slate-400">
+                    <CardDescription className="text-base sm:text-lg font-semibold text-slate-600 dark:text-slate-400">
                       {selectedPlayer.team} • {formatSeasonDisplay(selectedPlayer.season)}
                     </CardDescription>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                     <Button
                       variant="outline"
                       onClick={() => {
                         setSelectedPlayer(null);
                         setSimilarPlayers([]);
                       }}
-                      className="border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/50 font-semibold"
+                      className="border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/50 font-semibold w-full sm:w-auto"
                     >
                       {translations('player.backToSelection')}
                     </Button>
-                    <Tabs defaultValue="radar" className="w-[220px]" onValueChange={setChartType}>
+                    <Tabs defaultValue="radar" className="w-full sm:w-[220px]" onValueChange={setChartType}>
                       <TabsList className="grid w-full grid-cols-2 bg-blue-100 dark:bg-blue-950/50">
                         <TabsTrigger
                           value="radar"
@@ -805,40 +805,40 @@ export function PlayerComparison() {
       </div>
 
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-        <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden border-0">
-          <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-8 text-white">
+        <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden border-0 max-w-[95vw]">
+          <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-4 sm:p-6 lg:p-8 text-white">
             <DialogHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <DialogTitle className="text-3xl font-black">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                <DialogTitle className="text-xl sm:text-2xl lg:text-3xl font-black break-words">
                   {selectedPlayerForDetails?.player}
                 </DialogTitle>
-                <Badge className="bg-white text-blue-900 hover:bg-blue-50 px-3 py-1 text-sm font-bold">
+                <Badge className="bg-white text-blue-900 hover:bg-blue-50 px-3 py-1 text-sm font-bold w-fit">
                   {selectedPlayerForDetails?.position}
                 </Badge>
               </div>
-              <DialogDescription className="text-blue-100 text-lg font-semibold">
+              <DialogDescription className="text-blue-100 text-sm sm:text-base lg:text-lg font-semibold">
                 {selectedPlayerForDetails?.stats.team} • {selectedPlayerForDetails && formatSeasonDisplay(selectedPlayerForDetails.season)}
               </DialogDescription>
             </DialogHeader>
           </div>
 
-          <div className="p-8 space-y-6">
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <h4 className="font-bold text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+          <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <div className="space-y-1 sm:space-y-2">
+                <h4 className="font-bold text-xs sm:text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                   {translations('player.similarityScore')}
                 </h4>
-                <div className="text-4xl font-black text-blue-600 dark:text-blue-400">
+                <div className="text-3xl sm:text-4xl font-black text-blue-600 dark:text-blue-400">
                   {selectedPlayerForDetails && (selectedPlayerForDetails.similarity_score * 100).toFixed(1)}%
                 </div>
               </div>
-              <div className="space-y-2">
-                <h4 className="font-bold text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+              <div className="space-y-1 sm:space-y-2">
+                <h4 className="font-bold text-xs sm:text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                   {translations('player.playingStyle')}
                 </h4>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {selectedPlayerForDetails && getPlayerPlayingStyles(selectedPlayerForDetails.stats).map((style) => (
-                    <Badge key={style} className="bg-amber-500 hover:bg-amber-600 text-xs font-bold px-2 py-1">
+                    <Badge key={style} className="bg-amber-500 hover:bg-amber-600 text-[10px] sm:text-xs font-bold px-2 py-1">
                       {translations(`playingStyles.${style.replace(/\s+/g, '')}`)}
                     </Badge>
                   ))}
@@ -847,20 +847,20 @@ export function PlayerComparison() {
             </div>
 
             <div>
-              <h4 className="font-bold text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-4">
+              <h4 className="font-bold text-xs sm:text-sm text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-3 sm:mb-4">
                 {translations('player.keyStats')}
               </h4>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
                 {selectedPlayerForDetails &&
                   getDetailedStats(selectedPlayerForDetails.stats).map((stat, index) => (
                     <div
                       key={index}
-                      className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 p-4 rounded-xl text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border-2 border-slate-200 dark:border-slate-700"
+                      className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 p-3 sm:p-4 rounded-lg sm:rounded-xl text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border-2 border-slate-200 dark:border-slate-700"
                     >
-                      <div className="text-xs font-bold text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wide">
+                      <div className="text-[10px] sm:text-xs font-bold text-slate-600 dark:text-slate-400 mb-1 sm:mb-2 uppercase tracking-wide">
                         {stat.stat}
                         {isMobile ? (
-                          <div className="text-[10px] opacity-70 mt-1 normal-case">
+                          <div className="text-[9px] opacity-70 mt-0.5 normal-case">
                             {stat.fullName}
                           </div>
                         ) : (
@@ -878,7 +878,7 @@ export function PlayerComparison() {
                           </TooltipProvider>
                         )}
                       </div>
-                      <div className="font-black text-2xl text-slate-900 dark:text-white">
+                      <div className="font-black text-lg sm:text-xl lg:text-2xl text-slate-900 dark:text-white">
                         {stat.value.toFixed(1)}
                       </div>
                     </div>
