@@ -1,5 +1,16 @@
 "use client"
 
+// Este archivo contiene las mejoras UI/UX aplicadas
+// Cambios principales:
+// 1. cursor-pointer en todas las cards clickeables
+// 2. Mejores hover states con transiciones suaves (200ms)
+// 3. Glassmorphism sutil en card principal
+// 4. Micro-animaciones respetando prefers-reduced-motion
+// 5. Mejor spacing y breathing room
+// 6. Focus states más visibles para accesibilidad
+// 7. Loading skeleton mejorado
+// 8. Badges con diseño más pulido
+
 import { useEffect, useState } from "react"
 import {
   Radar,
@@ -21,7 +32,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Check, ChevronsUpDown, HelpCircle, X } from "lucide-react"
+import { Check, ChevronsUpDown, HelpCircle, X, TrendingUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -326,11 +337,12 @@ export function PlayerComparison() {
     <div className="space-y-8 px-4 sm:px-6 md:px-8 max-w-[1200px] mx-auto">
       {isPlayerLoading && <BasketballLoader />}
 
-      <div className="flex flex-col items-center justify-center space-y-4 w-full">
-        <div className="w-full max-w-md space-y-4">
+      <div className="flex flex-col items-center justify-center space-y-6 w-full">
+        <div className="w-full max-w-2xl space-y-4">
           <div className="flex flex-col md:flex-row gap-4 w-full">
-            <div className="flex flex-col w-full md:w-1/3 gap-1">
-              <label htmlFor="season-select" className="font-medium text-sm ml-1">
+            {/* SEASON SELECT - MEJORADO */}
+            <div className="flex flex-col w-full md:w-1/3 gap-2">
+              <label htmlFor="season-select" className="font-semibold text-sm ml-1 text-slate-700 dark:text-slate-300">
                 {translations('season.label')}
               </label>
               <Popover open={seasonOpen} onOpenChange={setSeasonOpen}>
@@ -340,7 +352,7 @@ export function PlayerComparison() {
                     variant="outline"
                     role="combobox"
                     aria-expanded={seasonOpen}
-                    className="w-full justify-between bg-white dark:bg-slate-900 border-2 h-12 sm:h-14 text-base sm:text-lg"
+                    className="w-full justify-between bg-white dark:bg-slate-900 border-2 hover:border-blue-400 h-12 sm:h-14 text-base sm:text-lg transition-all duration-200 hover:shadow-md focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                     onClick={() => setSeasonOpen(!seasonOpen)}
                     disabled={isLoading || isPlayerLoading || availableSeasons.length === 0}
                   >
@@ -350,7 +362,7 @@ export function PlayerComparison() {
                         {translations('loading.data')}
                       </span>
                     ) : (
-                      <span className="truncate">{formatSeasonDisplay(selectedSeason)}</span>
+                      <span className="truncate font-medium">{formatSeasonDisplay(selectedSeason)}</span>
                     )}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-shrink-0" />
                   </Button>
@@ -365,15 +377,15 @@ export function PlayerComparison() {
                             key={season}
                             value={season}
                             onSelect={(value) => handleSeasonSelect(value)}
-                            className="cursor-pointer py-3"
+                            className="cursor-pointer py-3 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors duration-150"
                           >
                             <Check
                               className={cn(
-                                "mr-2 h-4 w-4 flex-shrink-0",
+                                "mr-2 h-4 w-4 flex-shrink-0 transition-opacity duration-150",
                                 selectedSeason === season ? "opacity-100" : "opacity-0"
                               )}
                             />
-                            <span>{formatSeasonDisplay(season)}</span>
+                            <span className="font-medium">{formatSeasonDisplay(season)}</span>
                           </CommandItem>
                         ))}
                       </CommandGroup>
@@ -383,8 +395,9 @@ export function PlayerComparison() {
               </Popover>
             </div>
 
-            <div className="flex flex-col w-full md:w-2/3 gap-1">
-              <label htmlFor="player-select" className="font-medium text-sm ml-1">
+            {/* PLAYER SELECT - MEJORADO */}
+            <div className="flex flex-col w-full md:w-2/3 gap-2">
+              <label htmlFor="player-select" className="font-semibold text-sm ml-1 text-slate-700 dark:text-slate-300">
                 {translations('player.label')}
               </label>
               {isMobile ? (
@@ -392,7 +405,7 @@ export function PlayerComparison() {
                   <Button
                     id="player-select"
                     variant="outline"
-                    className="w-full justify-between bg-white dark:bg-slate-900 border-2 h-12 sm:h-14 text-base sm:text-lg"
+                    className="w-full justify-between bg-white dark:bg-slate-900 border-2 hover:border-blue-400 h-12 sm:h-14 text-base sm:text-lg transition-all duration-200 hover:shadow-md focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                     onClick={() => setShowMobileDialog(true)}
                     disabled={isLoading || isPlayerLoading || availablePlayers.length === 0}
                   >
@@ -402,9 +415,9 @@ export function PlayerComparison() {
                         {translations('loading.data')}
                       </span>
                     ) : selectedPlayer ? (
-                      <span className="truncate">{selectedPlayer.player}</span>
+                      <span className="truncate font-medium">{selectedPlayer.player}</span>
                     ) : (
-                      <span className="truncate">{translations('player.select')}</span>
+                      <span className="truncate text-slate-500">{translations('player.select')}</span>
                     )}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-shrink-0" />
                   </Button>
@@ -417,7 +430,7 @@ export function PlayerComparison() {
                           variant="ghost"
                           size="icon"
                           onClick={() => setShowMobileDialog(false)}
-                          className="rounded-full"
+                          className="rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-150"
                         >
                           <X className="h-4 w-4" />
                           <span className="sr-only">Close</span>
@@ -437,11 +450,11 @@ export function PlayerComparison() {
                                     handlePlayerSelect(value);
                                     setShowMobileDialog(false);
                                   }}
-                                  className="cursor-pointer py-3 flex items-center"
+                                  className="cursor-pointer py-3 flex items-center hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors duration-150"
                                 >
                                   <Check
                                     className={cn(
-                                      "mr-2 h-4 w-4 flex-shrink-0",
+                                      "mr-2 h-4 w-4 flex-shrink-0 transition-opacity duration-150",
                                       selectedPlayer?.player === player.player ? "opacity-100" : "opacity-0"
                                     )}
                                   />
@@ -472,7 +485,7 @@ export function PlayerComparison() {
                       variant="outline"
                       role="combobox"
                       aria-expanded={open}
-                      className="w-full justify-between bg-white dark:bg-slate-900 border-2 h-12 sm:h-14 text-base sm:text-lg"
+                      className="w-full justify-between bg-white dark:bg-slate-900 border-2 hover:border-blue-400 h-12 sm:h-14 text-base sm:text-lg transition-all duration-200 hover:shadow-md focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={() => setOpen(!open)}
                       disabled={isLoading || isPlayerLoading || availablePlayers.length === 0}
                     >
@@ -482,9 +495,9 @@ export function PlayerComparison() {
                           {translations('loading.data')}
                         </span>
                       ) : selectedPlayer ? (
-                        <span className="truncate">{selectedPlayer.player}</span>
+                        <span className="truncate font-medium">{selectedPlayer.player}</span>
                       ) : (
-                        <span className="truncate">{translations('player.select')}</span>
+                        <span className="truncate text-slate-500">{translations('player.select')}</span>
                       )}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 flex-shrink-0" />
                     </Button>
@@ -492,7 +505,7 @@ export function PlayerComparison() {
                   <PopoverContent className="player-select-popover w-[var(--radix-popover-trigger-width)] p-0" align="start" sideOffset={4}>
                     <div className="md:hidden sticky top-0 z-10 py-2 px-4 bg-white dark:bg-slate-900 border-b flex items-center justify-between">
                       <h2 className="text-lg font-medium">{translations('player.select')}</h2>
-                      <Button variant="ghost" size="icon" onClick={() => setOpen(false)} className="rounded-full">
+                      <Button variant="ghost" size="icon" onClick={() => setOpen(false)} className="rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-150">
                         <X className="h-4 w-4" />
                         <span className="sr-only">Close</span>
                       </Button>
@@ -511,11 +524,11 @@ export function PlayerComparison() {
                                   onSelect={(value) => {
                                     handlePlayerSelect(value);
                                   }}
-                                  className="cursor-pointer py-3 flex items-center"
+                                  className="cursor-pointer py-3 flex items-center hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors duration-150"
                                 >
                                   <Check
                                     className={cn(
-                                      "mr-2 h-4 w-4 flex-shrink-0",
+                                      "mr-2 h-4 w-4 flex-shrink-0 transition-opacity duration-150",
                                       selectedPlayer?.player === player.player ? "opacity-100" : "opacity-0"
                                     )}
                                   />
@@ -545,31 +558,32 @@ export function PlayerComparison() {
 
         {selectedPlayer && !isPlayerLoading && (
           <div className="w-full">
-            <Card className="bg-white dark:bg-slate-900 shadow-lg border-0">
-              <CardHeader className="p-4 sm:p-6">
-                <div className="flex justify-between items-center flex-wrap gap-4">
-                  <div>
-                    <CardTitle className="text-xl sm:text-2xl">
+            {/* CARD PRINCIPAL CON GLASSMORPHISM SUTIL */}
+            <Card className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-xl border-0 ring-1 ring-slate-200 dark:ring-slate-800">
+              <CardHeader className="p-6 sm:p-8">
+                <div className="flex justify-between items-start flex-wrap gap-6">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-2xl sm:text-3xl font-bold mb-2">
                       {selectedPlayer.player}
-                      <Badge className="ml-2 bg-blue-600">{selectedPlayer.position}</Badge>
+                      <Badge className="ml-3 bg-blue-600 hover:bg-blue-700 transition-colors duration-150 px-3 py-1">{selectedPlayer.position}</Badge>
                     </CardTitle>
-                    <CardDescription>{selectedPlayer.team}</CardDescription>
+                    <CardDescription className="text-lg">{selectedPlayer.team} • {formatSeasonDisplay(selectedPlayer.season)}</CardDescription>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 flex-shrink-0">
                     <Button
                       variant="outline"
                       onClick={() => {
                         setSelectedPlayer(null);
                         setSimilarPlayers([]);
                       }}
-                      className="hidden sm:flex"
+                      className="hidden sm:flex hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-150"
                     >
                       {translations('player.backToSelection')}
                     </Button>
                     <Tabs defaultValue="radar" className="w-[200px]" onValueChange={setChartType}>
                       <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="radar">{translations('charts.radar')}</TabsTrigger>
-                        <TabsTrigger value="bar">{translations('charts.stats')}</TabsTrigger>
+                        <TabsTrigger value="radar" className="transition-all duration-150">{translations('charts.radar')}</TabsTrigger>
+                        <TabsTrigger value="bar" className="transition-all duration-150">{translations('charts.stats')}</TabsTrigger>
                       </TabsList>
                     </Tabs>
                   </div>
@@ -580,36 +594,43 @@ export function PlayerComparison() {
                     setSelectedPlayer(null);
                     setSimilarPlayers([]);
                   }}
-                  className="mt-4 w-full sm:hidden"
+                  className="mt-4 w-full sm:hidden hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-150"
                 >
                   {translations('player.backToSelection')}
                 </Button>
               </CardHeader>
-              <CardContent className="p-4 sm:p-6">
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold mb-4">{translations('player.similarPlayers')}</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                    {similarPlayers.map((player) => (
+              <CardContent className="p-6 sm:p-8">
+                <div className="mb-8">
+                  <div className="flex items-center gap-2 mb-5">
+                    <TrendingUp className="h-5 w-5 text-blue-600" />
+                    <h3 className="text-xl font-bold">{translations('player.similarPlayers')}</h3>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {similarPlayers.map((player, index) => (
                       <Card
                         key={player.player}
-                        className="cursor-pointer hover:shadow-md transition-shadow"
+                        className="cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border-2 hover:border-blue-400 group"
                         onClick={() => handlePlayerClick(player)}
+                        style={{
+                          animationDelay: `${index * 50}ms`,
+                          animationFillMode: 'both'
+                        }}
                       >
-                        <CardContent className="p-3 sm:p-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-semibold text-sm sm:text-base">{player.player}</p>
-                              <p className="text-xs sm:text-sm text-slate-500">{player.stats.team}</p>
-                              <p className="text-xs text-slate-400">{formatSeasonDisplay(player.season)}</p>
+                        <CardContent className="p-5">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex-1 min-w-0 pr-3">
+                              <p className="font-bold text-base mb-1 truncate group-hover:text-blue-600 transition-colors duration-150">{player.player}</p>
+                              <p className="text-sm text-slate-600 dark:text-slate-400 truncate">{player.stats.team}</p>
+                              <p className="text-xs text-slate-500 mt-0.5">{formatSeasonDisplay(player.season)}</p>
                             </div>
                             <Badge
                               className={`${
                                 player.similarity_score > 0.9
-                                  ? "bg-green-600"
+                                  ? "bg-emerald-500 hover:bg-emerald-600"
                                   : player.similarity_score > 0.8
-                                    ? "bg-blue-600"
-                                    : "bg-orange-500"
-                              } text-xs sm:text-sm`}
+                                    ? "bg-blue-500 hover:bg-blue-600"
+                                    : "bg-amber-500 hover:bg-amber-600"
+                              } text-sm font-bold px-2.5 py-1 flex-shrink-0 transition-colors duration-150`}
                             >
                               {Math.round(player.similarity_score * 100)}%
                             </Badge>
@@ -620,7 +641,7 @@ export function PlayerComparison() {
                   </div>
                 </div>
 
-                <div className="h-[300px] sm:h-[400px] mt-6 sm:mt-8">
+                <div className="h-[320px] sm:h-[420px] mt-8">
                   {chartType === "radar" ? (
                     <ResponsiveContainer width="100%" height="100%">
                       <RadarChart
@@ -628,12 +649,13 @@ export function PlayerComparison() {
                         margin={{ top: 20, right: 30, bottom: 20, left: 30 }}
                         outerRadius={isMobile ? "65%" : "70%"}
                       >
-                        <PolarGrid gridType="circle" />
+                        <PolarGrid gridType="circle" stroke="#e2e8f0" />
                         <PolarAngleAxis
                           dataKey="category"
                           tick={{
                             fontSize: isMobile ? 12 : 14,
-                            fill: "currentColor"
+                            fill: "currentColor",
+                            fontWeight: 600
                           }}
                           tickLine={false}
                         />
@@ -651,7 +673,7 @@ export function PlayerComparison() {
                           stroke={playerColors[0]}
                           fill={playerColors[0]}
                           fillOpacity={0.3}
-                          strokeWidth={2}
+                          strokeWidth={2.5}
                         />
 
                         {similarPlayers.slice(0, 3).map((player, index) => (
@@ -661,7 +683,7 @@ export function PlayerComparison() {
                             dataKey={`${player.player} (${player.season})`}
                             stroke={playerColors[index + 1]}
                             fill={playerColors[index + 1]}
-                            fillOpacity={0.3}
+                            fillOpacity={0.2}
                             strokeWidth={2}
                           />
                         ))}
@@ -675,7 +697,14 @@ export function PlayerComparison() {
                             paddingTop: 20
                           }}
                         />
-                        <RechartsTooltip contentStyle={{ fontSize: isMobile ? 10 : 12 }} />
+                        <RechartsTooltip
+                          contentStyle={{
+                            fontSize: isMobile ? 10 : 12,
+                            borderRadius: '8px',
+                            border: '1px solid #e2e8f0',
+                            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                          }}
+                        />
                       </RadarChart>
                     </ResponsiveContainer>
                   ) : (
@@ -684,25 +713,30 @@ export function PlayerComparison() {
                         data={getDetailedStats(selectedPlayer)}
                         margin={isMobile ? { top: 5, right: 5, left: 5, bottom: 65 } : { top: 20, right: 20, left: 0, bottom: 5 }}
                         layout="horizontal"
-                        barSize={isMobile ? 12 : 20}
-                        barGap={isMobile ? 2 : 5}
-                        barCategoryGap={isMobile ? 5 : 10}
+                        barSize={isMobile ? 14 : 24}
+                        barGap={isMobile ? 3 : 6}
+                        barCategoryGap={isMobile ? 8 : 12}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                         <XAxis
                           dataKey="stat"
-                          tick={{ fontSize: isMobile ? 10 : 12 }}
+                          tick={{ fontSize: isMobile ? 10 : 13, fontWeight: 600 }}
                           tickLine={!isMobile}
                           height={isMobile ? 20 : 30}
                         />
                         <YAxis
                           tick={{ fontSize: isMobile ? 10 : 12 }}
                           tickLine={!isMobile}
-                          width={isMobile ? 25 : 40}
+                          width={isMobile ? 28 : 45}
                           domain={[0, 'auto']}
                         />
                         <RechartsTooltip
-                          contentStyle={{ fontSize: isMobile ? 10 : 12 }}
+                          contentStyle={{
+                            fontSize: isMobile ? 10 : 12,
+                            borderRadius: '8px',
+                            border: '1px solid #e2e8f0',
+                            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                          }}
                           formatter={(value, name) => {
                             const nameStr = String(name);
                             return [`${Number(value).toFixed(1)}`, nameStr.includes(' (') ? nameStr.split(' (')[0] : nameStr];
@@ -722,9 +756,8 @@ export function PlayerComparison() {
                             bottom: 0,
                             lineHeight: "1.2em"
                           }}
-                          iconSize={isMobile ? 8 : 14}
+                          iconSize={isMobile ? 10 : 14}
                           formatter={(value) => {
-                            // Truncate player names on mobile
                             if (isMobile && typeof value === 'string') {
                               const name = value.split(' (')[0];
                               return name.length > 10 ? name.substring(0, 10) + '...' : name;
@@ -736,7 +769,7 @@ export function PlayerComparison() {
                           dataKey="value"
                           name={`${selectedPlayer.player} (${formatSeasonDisplay(selectedPlayer.season)})`}
                           fill={playerColors[0]}
-                          radius={[2, 2, 0, 0]}
+                          radius={[4, 4, 0, 0]}
                         />
                         {similarPlayers.slice(0, 3).map((player, index) => (
                           <Bar
@@ -744,7 +777,7 @@ export function PlayerComparison() {
                             dataKey="value"
                             name={`${player.player} (${formatSeasonDisplay(player.season)})`}
                             fill={playerColors[index + 1]}
-                            radius={[2, 2, 0, 0]}
+                            radius={[4, 4, 0, 0]}
                           />
                         ))}
                       </BarChart>
@@ -757,30 +790,31 @@ export function PlayerComparison() {
         )}
       </div>
 
+      {/* DIALOG DE DETALLES MEJORADO */}
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-        <DialogContent className="sm:max-w-[500px] p-4 sm:p-6">
+        <DialogContent className="sm:max-w-[540px] p-6 sm:p-8">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <DialogTitle className="flex items-center gap-3 text-xl sm:text-2xl">
               {selectedPlayerForDetails?.player}
-              <Badge className="bg-blue-600">{selectedPlayerForDetails?.position}</Badge>
+              <Badge className="bg-blue-600 hover:bg-blue-700 transition-colors duration-150 px-3 py-1">{selectedPlayerForDetails?.position}</Badge>
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-base mt-2">
               {selectedPlayerForDetails?.stats.team} • {selectedPlayerForDetails && formatSeasonDisplay(selectedPlayerForDetails.season)}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-6 mt-4">
+            <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
-                <h4 className="font-medium">{translations('player.similarityScore')}</h4>
-                <div className="text-xl sm:text-2xl font-bold text-blue-600">
-                  {selectedPlayerForDetails && (selectedPlayerForDetails.similarity_score * 100).toFixed(2)}%
+                <h4 className="font-semibold text-slate-700 dark:text-slate-300">{translations('player.similarityScore')}</h4>
+                <div className="text-2xl sm:text-3xl font-bold text-blue-600">
+                  {selectedPlayerForDetails && (selectedPlayerForDetails.similarity_score * 100).toFixed(1)}%
                 </div>
               </div>
               <div className="space-y-2">
-                <h4 className="font-medium">{translations('player.playingStyle')}</h4>
+                <h4 className="font-semibold text-slate-700 dark:text-slate-300">{translations('player.playingStyle')}</h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedPlayerForDetails && getPlayerPlayingStyles(selectedPlayerForDetails.stats).map((style) => (
-                    <Badge key={style} variant="secondary" className="text-xs">
+                    <Badge key={style} variant="secondary" className="text-xs font-medium px-2 py-1">
                       {translations(`playingStyles.${style.replace(/\s+/g, '')}`)}
                     </Badge>
                   ))}
@@ -789,15 +823,15 @@ export function PlayerComparison() {
             </div>
 
             <div>
-              <h4 className="font-medium mb-2">{translations('player.keyStats')}</h4>
-              <div className="grid grid-cols-3 gap-2">
+              <h4 className="font-semibold mb-4 text-slate-700 dark:text-slate-300">{translations('player.keyStats')}</h4>
+              <div className="grid grid-cols-3 gap-3">
                 {selectedPlayerForDetails &&
                   getDetailedStats(selectedPlayerForDetails.stats).map((stat, index) => (
-                    <div key={index} className="bg-slate-100 dark:bg-slate-800 p-2 rounded-md text-center">
-                      <div className="text-sm text-slate-500 mb-1">
+                    <div key={index} className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-800/50 p-3 rounded-lg text-center hover:shadow-md transition-shadow duration-150">
+                      <div className="text-sm text-slate-600 dark:text-slate-400 mb-1 font-medium">
                         {stat.stat}
                         {isMobile ? (
-                          <div className="text-xs opacity-70 mt-0.5">
+                          <div className="text-xs opacity-70 mt-1">
                             {stat.fullName}
                           </div>
                         ) : (
@@ -815,14 +849,14 @@ export function PlayerComparison() {
                           </TooltipProvider>
                         )}
                       </div>
-                      <div className="font-bold text-sm sm:text-base">{stat.value.toFixed(2)}</div>
+                      <div className="font-bold text-base sm:text-lg text-slate-900 dark:text-white">{stat.value.toFixed(1)}</div>
                     </div>
                   ))}
               </div>
             </div>
 
             <div className="pt-2">
-              <Button className="w-full" onClick={() => setShowDetailsDialog(false)}>
+              <Button className="w-full hover:shadow-lg transition-all duration-200" onClick={() => setShowDetailsDialog(false)}>
                 {translations('player.close')}
               </Button>
             </div>
@@ -843,6 +877,15 @@ export function PlayerComparison() {
             max-height: 100% !important;
             transform: none !important;
             border-radius: 0 !important;
+          }
+        }
+
+        /* Respetar prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+          * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
           }
         }
       `}</style>
