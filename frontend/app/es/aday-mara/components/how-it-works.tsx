@@ -60,7 +60,7 @@ export function HowItWorks() {
             ¿Cómo está calculado todo esto?
           </h2>
           <p className="mb-14 text-center text-zinc-400">
-            Para los curiosos: la metodología detrás de las comparaciones
+            La metodología detrás de las comparaciones
           </p>
         </AnimateOnScroll>
 
