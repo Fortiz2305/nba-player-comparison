@@ -1,9 +1,7 @@
 import { Hero } from "./components/hero";
-import { HowItWorks } from "./components/how-it-works";
-import { Limitations } from "./components/limitations";
 import { SimilarPlayers } from "./components/similar-players";
 import { RadarComparison } from "./components/radar-comparison";
-import { StatsTable } from "./components/stats-table";
+import { HowItWorks } from "./components/how-it-works";
 import { Methodology } from "./components/methodology";
 
 export default function AdayMaraPage() {
@@ -12,9 +10,7 @@ export default function AdayMaraPage() {
       <Hero />
       <SimilarPlayers />
       <RadarComparison />
-      <StatsTable />
       <HowItWorks />
-      <Limitations />
       <Methodology />
     </main>
   );
