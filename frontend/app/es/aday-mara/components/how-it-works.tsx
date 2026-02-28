@@ -176,6 +176,28 @@ export function HowItWorks() {
               </div>
             </div>
 
+            <div className="rounded-xl border border-[#FFCB05]/20 bg-[#FFCB05]/5 p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg"
+                  style={{ backgroundColor: "rgba(255,203,5,0.15)", color: MICHIGAN_GOLD }}
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+                  </svg>
+                </div>
+                <h4 className="text-sm font-semibold text-white">
+                  Predicción de draft
+                </h4>
+              </div>
+              <p className="text-xs leading-relaxed text-zinc-400">
+                Según la posición de draft de sus 15 jugadores más similares, el algoritmo sitúa a Aday Mara en torno al{" "}
+                <span className="font-semibold text-white">pick #24</span> del Draft 2026.
+                El rango va desde el <span className="text-white">#1</span> (Karl-Anthony Towns) hasta el <span className="text-white">#46</span> (A.J. Hammons).
+                Es una estimación basada únicamente en estadísticas — el draft depende de muchos otros factores.
+              </p>
+            </div>
+
             <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5 text-center">
               <p className="text-sm leading-relaxed text-zinc-400">
                 <span className="font-semibold" style={{ color: MICHIGAN_GOLD }}>
