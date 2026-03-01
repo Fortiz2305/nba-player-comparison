@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     images: [
       {
-        url: "/og-aday-mara.png",
+        url: "https://datosconnba.netlify.app/es/aday-mara/opengraph-image",
         width: 1200,
         height: 630,
         alt: "Aday Mara - Comparación NCAA",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: "¿A quién se parecerá Aday Mara en la NBA?",
     description:
       "Comparamos sus stats universitarias con todos los jugadores drafteados desde 2005 que pasaron por NCAA. Descubre a quién se parecerá el pívot español de 2.21m.",
-    images: ["/og-aday-mara.png"],
+    images: ["https://datosconnba.netlify.app/es/aday-mara/opengraph-image"],
   },
   robots: {
     index: true,
